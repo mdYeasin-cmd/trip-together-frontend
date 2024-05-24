@@ -5,6 +5,7 @@ import facebookIcon from "./images/facebook.png";
 import instagramIcon from "./images/instagram.png";
 import twitterIcon from "./images/twitter.png";
 import linkedinIcon from "./images/linkedin.png";
+import coxsBazarImage from "./images/cox's-bazar.jpg";
 
 export const assets = {
   logo,
@@ -14,4 +15,5 @@ export const assets = {
   instagramIcon,
   twitterIcon,
   linkedinIcon,
+  coxsBazarImage,
 };

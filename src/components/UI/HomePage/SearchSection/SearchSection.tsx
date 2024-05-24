@@ -12,14 +12,14 @@ const SearchSection = () => {
   return (
     <Container>
       <Stack sx={{ py: 5 }}>
-        <Grid container gap={2}>
+        <Grid container spacing={2}>
           <Grid item md={6}>
             <TextField
               placeholder="Search you desire travell buddy"
               sx={{ width: "100%" }}
             />
           </Grid>
-          <Grid item md={2}>
+          <Grid item md={4}>
             <TextField select sx={{ width: "100%" }}>
               <MenuItem value={"Destination"}>Destination</MenuItem>
               <MenuItem value={"Travel dates"}>Travel dates</MenuItem>
