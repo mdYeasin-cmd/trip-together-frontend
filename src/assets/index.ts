@@ -6,6 +6,7 @@ import instagramIcon from "./images/instagram.png";
 import twitterIcon from "./images/twitter.png";
 import linkedinIcon from "./images/linkedin.png";
 import coxsBazarImage from "./images/cox's-bazar.jpg";
+import whyChooseUs from "./images/why-choose-us.png";
 
 export const assets = {
   logo,
@@ -16,4 +17,5 @@ export const assets = {
   twitterIcon,
   linkedinIcon,
   coxsBazarImage,
+  whyChooseUs,
 };
