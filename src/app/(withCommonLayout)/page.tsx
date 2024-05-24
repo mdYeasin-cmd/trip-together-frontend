@@ -1,11 +1,13 @@
+import Footer from "@/components/Shared/Footer/Footer";
 import HeroSection from "@/components/UI/HomePage/HeroSection/HeroSection";
-import { Button } from "@mui/material";
-import Image from "next/image";
+import SearchSection from "@/components/UI/SearchSection/SearchSection";
 
 export default function HomePage() {
   return (
     <>
       <HeroSection />
+      <SearchSection />
+      <Footer />
     </>
   );
 }

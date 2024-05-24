@@ -1,6 +1,6 @@
 "use client";
 
-import Logo from "@/components/UI/Logo/Logo";
+import { Logo } from "@/components/UI/Logo/Logo";
 import { colors } from "@/constants";
 import { Button, Container, Stack, Typography } from "@mui/material";
 import Link from "next/link";
