@@ -1,5 +1,5 @@
 import { assets } from "@/assets";
-import { WhiteLogo } from "@/components/UI/Logo/Logo";
+import { WhiteLogo } from "@/components/Shared/Logo/Logo";
 import { Box, Container, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
