@@ -8,12 +8,33 @@ import { colors } from "@/constants";
 import { registerTraveler } from "@/services/actions/registerTraveler";
 import { userLogin } from "@/services/actions/userLogin";
 import { storeUserInfo } from "@/services/auth.service";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, Container, Grid, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FieldValues } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
+
+export const registerValidationSchema = z
+  .object({
+    name: z.string().min(1, "Please enter your name."),
+    email: z.string().email("Please enter a valid email address."),
+    password: z.string().min(6, "Password must be at least 6 characters."),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Confirm password don't match with your password.",
+    path: ["confirmPassword"],
+  });
+
+const defaultValues = {
+  name: "",
+  email: "",
+  password: "",
+  confirmPassword: "",
+};
 
 const RegisterPage = () => {
   const router = useRouter();
@@ -92,7 +113,11 @@ const RegisterPage = () => {
                 </Box>
               </Stack>
 
-              <TTForm onSubmit={handleRegister}>
+              <TTForm
+                onSubmit={handleRegister}
+                resolver={zodResolver(registerValidationSchema)}
+                defaultValues={defaultValues}
+              >
                 <Box>
                   <Grid container spacing={2} my={1}>
                     <Grid item xs={12}>

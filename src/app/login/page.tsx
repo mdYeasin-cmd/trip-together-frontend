@@ -7,24 +7,29 @@ import { Logo } from "@/components/Shared/Logo/Logo";
 import { colors } from "@/constants";
 import { userLogin } from "@/services/actions/userLogin";
 import { storeUserInfo } from "@/services/auth.service";
-import { IUserCredentials } from "@/types";
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Box, Button, Container, Grid, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+import { useState } from "react";
+import { FieldValues } from "react-hook-form";
 import { toast } from "sonner";
+import { z } from "zod";
+
+export const loginValidationSchema = z.object({
+  email: z.string().email("Please enter a valid email address."),
+  password: z.string().min(6, "Password must be at least 6 characters."),
+});
+
+const defaultValues = {
+  email: "",
+  password: "",
+};
 
 const LoginPage = () => {
   const router = useRouter();
+  const [error, setError] = useState();
 
   const handleLogin = async (data: FieldValues) => {
     try {
@@ -34,6 +39,8 @@ const LoginPage = () => {
         toast.success(res.message);
         storeUserInfo({ accessToken: res?.data?.token });
         router.push("/");
+      } else {
+        setError(res.message);
       }
     } catch (error) {
       console.log(error);
@@ -93,7 +100,27 @@ const LoginPage = () => {
                 </Box>
               </Stack>
 
-              <TTForm onSubmit={handleLogin}>
+              {error && (
+                <Box>
+                  <Typography
+                    sx={{
+                      backgroundColor: "red",
+                      padding: "1px",
+                      borderRadius: "2px",
+                      color: "white",
+                      marginTop: "5px",
+                    }}
+                  >
+                    {error}
+                  </Typography>
+                </Box>
+              )}
+
+              <TTForm
+                onSubmit={handleLogin}
+                resolver={zodResolver(loginValidationSchema)}
+                defaultValues={defaultValues}
+              >
                 <Box>
                   <Grid container spacing={2} my={1}>
                     <Grid item xs={12}>
