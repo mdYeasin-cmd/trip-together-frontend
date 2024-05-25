@@ -1,6 +1,10 @@
+"use client";
+
 import { assets } from "@/assets";
 import { Logo } from "@/components/Shared/Logo/Logo";
 import { colors } from "@/constants";
+import { registerTraveler } from "@/services/actions/registerTraveler";
+import { IUserData } from "@/types";
 import {
   Box,
   Button,
@@ -12,8 +16,34 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm, SubmitHandler } from "react-hook-form";
+import { toast } from "sonner";
 
 const RegisterPage = () => {
+  const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm<IUserData>();
+
+  const onSubmit: SubmitHandler<IUserData> = async (data) => {
+    console.log(data, "regist data");
+    try {
+      const res = await registerTraveler(data);
+
+      console.log(res, "response");
+      if (res.success) {
+        toast.success(res.message);
+        router.push("/login");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Container sx={{ height: "100vh" }}>
       <Stack
@@ -67,7 +97,7 @@ const RegisterPage = () => {
                 </Box>
               </Stack>
 
-              <form>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <Box>
                   <Grid container spacing={2} my={1}>
                     <Grid item xs={12}>
@@ -76,15 +106,7 @@ const RegisterPage = () => {
                         variant="outlined"
                         size="small"
                         fullWidth={true}
-                      />
-                    </Grid>
-
-                    <Grid item xs={12}>
-                      <TextField
-                        label="Mobile"
-                        variant="outlined"
-                        size="small"
-                        fullWidth={true}
+                        {...register("name")}
                       />
                     </Grid>
 
@@ -94,6 +116,8 @@ const RegisterPage = () => {
                         variant="outlined"
                         size="small"
                         fullWidth={true}
+                        type="email"
+                        {...register("email")}
                       />
                     </Grid>
 
@@ -103,11 +127,28 @@ const RegisterPage = () => {
                         variant="outlined"
                         size="small"
                         fullWidth={true}
+                        type="password"
+                        {...register("password")}
+                      />
+                    </Grid>
+
+                    <Grid item xs={12}>
+                      <TextField
+                        label="Confirm Password"
+                        variant="outlined"
+                        size="small"
+                        fullWidth={true}
+                        type="password"
+                        {...register("confirmPassword")}
                       />
                     </Grid>
                   </Grid>
 
-                  <Button sx={{ margin: "20px 0px" }} fullWidth={true}>
+                  <Button
+                    type="submit"
+                    sx={{ margin: "20px 0px" }}
+                    fullWidth={true}
+                  >
                     Register
                   </Button>
 
