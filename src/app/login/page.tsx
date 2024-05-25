@@ -1,6 +1,10 @@
+"use client";
+
 import { assets } from "@/assets";
 import { Logo } from "@/components/Shared/Logo/Logo";
 import { colors } from "@/constants";
+import { userLogin } from "@/services/actions/userLogin";
+import { IUserCredentials } from "@/types";
 import {
   Box,
   Button,
@@ -12,8 +16,32 @@ import {
 } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { SubmitHandler, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 const LoginPage = () => {
+  const router = useRouter();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IUserCredentials>();
+
+  const onSubmit: SubmitHandler<IUserCredentials> = async (data) => {
+    try {
+      const res = await userLogin(data);
+
+      console.log(res, "response");
+      if (res.success) {
+        toast.success(res.message);
+        // router.push("/dashboard");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Container sx={{ height: "100vh" }}>
       <Stack
@@ -67,7 +95,7 @@ const LoginPage = () => {
                 </Box>
               </Stack>
 
-              <form>
+              <form onSubmit={handleSubmit(onSubmit)}>
                 <Box>
                   <Grid container spacing={2} my={1}>
                     <Grid item xs={12}>
@@ -76,6 +104,7 @@ const LoginPage = () => {
                         variant="outlined"
                         size="small"
                         fullWidth={true}
+                        {...register("email")}
                       />
                     </Grid>
 
@@ -85,6 +114,7 @@ const LoginPage = () => {
                         variant="outlined"
                         size="small"
                         fullWidth={true}
+                        {...register("password")}
                       />
                     </Grid>
                   </Grid>
@@ -95,7 +125,11 @@ const LoginPage = () => {
                     </Link>
                   </Typography>
 
-                  <Button sx={{ margin: "20px 0px" }} fullWidth={true}>
+                  <Button
+                    type="submit"
+                    sx={{ margin: "20px 0px" }}
+                    fullWidth={true}
+                  >
                     Login
                   </Button>
 

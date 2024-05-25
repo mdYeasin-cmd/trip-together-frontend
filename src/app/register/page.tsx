@@ -25,7 +25,6 @@ const RegisterPage = () => {
   const {
     register,
     handleSubmit,
-    watch,
     formState: { errors },
   } = useForm<IUserData>();
 
