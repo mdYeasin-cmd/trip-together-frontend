@@ -1,8 +1,8 @@
 "use server";
 import { BACKEND_API_URL } from "@/constants";
-import { IUserCredentials } from "@/types";
+import { FieldValues } from "react-hook-form";
 
-export const userLogin = async (data: IUserCredentials) => {
+export const userLogin = async (data: FieldValues) => {
   const res = await fetch(`${BACKEND_API_URL}/login`, {
     method: "POST",
     headers: {

@@ -1,6 +1,8 @@
 "use client";
 
 import { assets } from "@/assets";
+import TTForm from "@/components/Forms/TTForm";
+import TTInput from "@/components/Forms/TTInput";
 import { Logo } from "@/components/Shared/Logo/Logo";
 import { colors } from "@/constants";
 import { userLogin } from "@/services/actions/userLogin";
@@ -18,22 +20,16 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
 const LoginPage = () => {
   const router = useRouter();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<IUserCredentials>();
 
-  const onSubmit: SubmitHandler<IUserCredentials> = async (data) => {
+  const handleLogin = async (data: FieldValues) => {
     try {
       const res = await userLogin(data);
 
-      console.log(res, "response");
       if (res.success) {
         toast.success(res.message);
         storeUserInfo({ accessToken: res?.data?.token });
@@ -97,26 +93,24 @@ const LoginPage = () => {
                 </Box>
               </Stack>
 
-              <form onSubmit={handleSubmit(onSubmit)}>
+              <TTForm onSubmit={handleLogin}>
                 <Box>
                   <Grid container spacing={2} my={1}>
                     <Grid item xs={12}>
-                      <TextField
+                      <TTInput
                         label="Email"
-                        variant="outlined"
-                        size="small"
+                        type="email"
                         fullWidth={true}
-                        {...register("email")}
+                        name="email"
                       />
                     </Grid>
 
                     <Grid item xs={12}>
-                      <TextField
+                      <TTInput
                         label="Password"
-                        variant="outlined"
-                        size="small"
+                        type="password"
                         fullWidth={true}
-                        {...register("password")}
+                        name="password"
                       />
                     </Grid>
                   </Grid>
@@ -142,7 +136,7 @@ const LoginPage = () => {
                     </Link>
                   </Typography>
                 </Box>
-              </form>
+              </TTForm>
             </Box>
           </Stack>
         </Box>

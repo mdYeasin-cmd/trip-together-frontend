@@ -1,36 +1,24 @@
 "use client";
 
 import { assets } from "@/assets";
+import TTForm from "@/components/Forms/TTForm";
+import TTInput from "@/components/Forms/TTInput";
 import { Logo } from "@/components/Shared/Logo/Logo";
 import { colors } from "@/constants";
 import { registerTraveler } from "@/services/actions/registerTraveler";
 import { userLogin } from "@/services/actions/userLogin";
 import { storeUserInfo } from "@/services/auth.service";
-import { IUserData } from "@/types";
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  Stack,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Container, Grid, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useForm, SubmitHandler } from "react-hook-form";
+import { FieldValues } from "react-hook-form";
 import { toast } from "sonner";
 
 const RegisterPage = () => {
   const router = useRouter();
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<IUserData>();
 
-  const onSubmit: SubmitHandler<IUserData> = async (data) => {
+  const handleRegister = async (data: FieldValues) => {
     try {
       const res = await registerTraveler(data);
 
@@ -104,49 +92,37 @@ const RegisterPage = () => {
                 </Box>
               </Stack>
 
-              <form onSubmit={handleSubmit(onSubmit)}>
+              <TTForm onSubmit={handleRegister}>
                 <Box>
                   <Grid container spacing={2} my={1}>
                     <Grid item xs={12}>
-                      <TextField
-                        label="Name"
-                        variant="outlined"
-                        size="small"
-                        fullWidth={true}
-                        {...register("name")}
-                      />
+                      <TTInput label="Name" fullWidth={true} name="name" />
                     </Grid>
 
                     <Grid item xs={12}>
-                      <TextField
+                      <TTInput
                         label="Email"
-                        variant="outlined"
-                        size="small"
                         fullWidth={true}
                         type="email"
-                        {...register("email")}
+                        name="email"
                       />
                     </Grid>
 
                     <Grid item xs={12}>
-                      <TextField
+                      <TTInput
                         label="Password"
-                        variant="outlined"
-                        size="small"
                         fullWidth={true}
                         type="password"
-                        {...register("password")}
+                        name="password"
                       />
                     </Grid>
 
                     <Grid item xs={12}>
-                      <TextField
+                      <TTInput
                         label="Confirm Password"
-                        variant="outlined"
-                        size="small"
+                        name="confirmPassword"
                         fullWidth={true}
                         type="password"
-                        {...register("confirmPassword")}
                       />
                     </Grid>
                   </Grid>
@@ -166,7 +142,7 @@ const RegisterPage = () => {
                     </Link>
                   </Typography>
                 </Box>
-              </form>
+              </TTForm>
             </Box>
           </Stack>
         </Box>
