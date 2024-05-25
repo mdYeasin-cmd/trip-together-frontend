@@ -4,6 +4,7 @@ import { assets } from "@/assets";
 import { Logo } from "@/components/Shared/Logo/Logo";
 import { colors } from "@/constants";
 import { userLogin } from "@/services/actions/userLogin";
+import { storeUserInfo } from "@/services/auth.service";
 import { IUserCredentials } from "@/types";
 import {
   Box,
@@ -35,7 +36,8 @@ const LoginPage = () => {
       console.log(res, "response");
       if (res.success) {
         toast.success(res.message);
-        // router.push("/dashboard");
+        storeUserInfo({ accessToken: res?.data?.token });
+        router.push("/");
       }
     } catch (error) {
       console.log(error);

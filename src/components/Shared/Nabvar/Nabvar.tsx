@@ -2,11 +2,16 @@
 
 import { Logo } from "@/components/Shared/Logo/Logo";
 import { colors } from "@/constants";
-import { Button, Container, Stack, Typography } from "@mui/material";
+import { Container, Stack, Typography } from "@mui/material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import dynamic from "next/dynamic";
 
 const Nabvar = () => {
+  const AuthButton = dynamic(
+    () => import("@/components/Shared/AuthButton/AuthButton"),
+    { ssr: false }
+  );
   const pathname = usePathname();
 
   return (
@@ -62,9 +67,8 @@ const Nabvar = () => {
             >
               Blog
             </Typography>
-            <Button component={Link} href={"/login"}>
-              Login
-            </Button>
+
+            <AuthButton />
           </Stack>
         </Stack>
       </Container>

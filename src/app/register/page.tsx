@@ -4,6 +4,8 @@ import { assets } from "@/assets";
 import { Logo } from "@/components/Shared/Logo/Logo";
 import { colors } from "@/constants";
 import { registerTraveler } from "@/services/actions/registerTraveler";
+import { userLogin } from "@/services/actions/userLogin";
+import { storeUserInfo } from "@/services/auth.service";
 import { IUserData } from "@/types";
 import {
   Box,
@@ -29,14 +31,20 @@ const RegisterPage = () => {
   } = useForm<IUserData>();
 
   const onSubmit: SubmitHandler<IUserData> = async (data) => {
-    console.log(data, "regist data");
     try {
       const res = await registerTraveler(data);
 
-      console.log(res, "response");
-      if (res.success) {
-        toast.success(res.message);
-        router.push("/login");
+      if (res?.success) {
+        toast.success(res?.message);
+        const result = await userLogin({
+          email: data.email,
+          password: data.password,
+        });
+
+        if (result?.data?.token) {
+          storeUserInfo({ accessToken: result?.data?.token });
+          router.push("/");
+        }
       }
     } catch (error) {
       console.log(error);
