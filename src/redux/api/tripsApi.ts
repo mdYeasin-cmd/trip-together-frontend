@@ -20,7 +20,19 @@ const tripsApi = baseApi.injectEndpoints({
       }),
       providesTags: [tagTypes.trips],
     }),
+
+    deleteATrip: build.mutation({
+      query: (id) => ({
+        url: `/trips/${id}`,
+        method: "DELETE",
+      }),
+      invalidatesTags: [tagTypes.trips],
+    }),
   }),
 });
 
-export const { useCreateATripMutation, useGetAllTripsQuery } = tripsApi;
+export const {
+  useCreateATripMutation,
+  useGetAllTripsQuery,
+  useDeleteATripMutation,
+} = tripsApi;

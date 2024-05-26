@@ -11,6 +11,7 @@ import { travelTypes } from "@/constants/trip.constant";
 import imgbbImageUploader from "@/helpers/imgbb/imgbbImageUploader";
 import {
   useCreateATripMutation,
+  useDeleteATripMutation,
   useGetAllTripsQuery,
 } from "@/redux/api/tripsApi";
 import { Box, Button, Grid, IconButton, Stack } from "@mui/material";
@@ -32,6 +33,7 @@ const TravelPostsPage = () => {
   // redux consume
   const [createATrip] = useCreateATripMutation();
   const { data, isLoading } = useGetAllTripsQuery({});
+  const [deleteATrip] = useDeleteATripMutation();
 
   console.log(data);
 
@@ -64,6 +66,8 @@ const TravelPostsPage = () => {
       if (res?.data?.id) {
         toast.success("Trip is created successfully.", { id: toastId });
         setOpneCreateTripModal(false);
+        setFiles(null);
+        setIsCreateButtonClick(false);
       }
     } catch (error) {
       toast.error("Trip creation failed!", { id: toastId });
@@ -72,8 +76,17 @@ const TravelPostsPage = () => {
     }
   };
 
-  const handlePostDelete = (id: string) => {
-    console.log(id, "post id");
+  const handlePostDelete = async (id: string) => {
+    try {
+      const res = await deleteATrip(id);
+
+      if (res?.data?.id) {
+        toast.success("Trip is deleted successfully.");
+      }
+    } catch (error) {
+      toast.error("Trip delete process failed!");
+      console.log(error);
+    }
   };
 
   const columns: GridColDef[] = [
