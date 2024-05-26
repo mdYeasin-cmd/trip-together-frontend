@@ -9,7 +9,8 @@ import TTModal from "@/components/Shared/TTModal/TTModal";
 import { colors } from "@/constants";
 import { travelTypes } from "@/constants/trip.constant";
 import imgbbImageUploader from "@/helpers/imgbb/imgbbImageUploader";
-import { Box, Button, Grid, InputBase, Stack, TextField } from "@mui/material";
+import { useCreateATripMutation } from "@/redux/api/tripsApi";
+import { Box, Button, Grid, Stack } from "@mui/material";
 import Image from "next/image";
 import React, { useState } from "react";
 import { FieldValues } from "react-hook-form";
@@ -19,27 +20,47 @@ const TravelPostsPage = () => {
   const [opneCreateTripModal, setOpneCreateTripModal] =
     useState<boolean>(false);
   const [files, setFiles] = useState<FileList | null>(null);
+  const [isCreateButtonClick, setIsCreateButtonClick] =
+    useState<boolean>(false);
 
-  console.log(files, "files here");
+  // redux hanlde
+  const [createATrip] = useCreateATripMutation();
 
   const handlePostSubmit = async (values: FieldValues) => {
-    if (!values?.files?.length) {
-      toast.error("Please upload at least 1 image.");
-      return;
+    setIsCreateButtonClick(true);
+    const toastId = toast.loading("Please wait...");
+    try {
+      if (!values?.files?.length) {
+        toast.error("Please upload at least 1 image.", { id: toastId });
+        setIsCreateButtonClick(false);
+        return;
+      }
+
+      const { files, ...createTripData } = values;
+      const fileList = Array.from(files);
+
+      const photoPromises = fileList.map((file) => {
+        return imgbbImageUploader(file as Blob);
+      });
+
+      const photoList = await Promise.all(photoPromises);
+
+      createTripData.photos = photoList.map(
+        (photo) => photo?.data?.data?.display_url
+      );
+      createTripData.budget = Number(createTripData.budget);
+
+      const res = await createATrip(createTripData);
+
+      if (res?.data?.id) {
+        toast.success("Trip is created successfully.", { id: toastId });
+        setOpneCreateTripModal(false);
+      }
+    } catch (error) {
+      toast.error("Trip creation failed!", { id: toastId });
+      setIsCreateButtonClick(false);
+      console.log(error);
     }
-
-    const { files, ...createTripData } = values;
-    const fileList = Array.from(files);
-
-    const photoPromises = fileList.map((file) => {
-      return imgbbImageUploader(file as Blob);
-    });
-
-    const photoList = await Promise.all(photoPromises);
-
-    createTripData.photos = photoList.map(
-      (photo) => photo?.data?.data?.display_url
-    );
   };
 
   return (
@@ -48,6 +69,8 @@ const TravelPostsPage = () => {
         <Button onClick={() => setOpneCreateTripModal(true)}>
           Create A Trip
         </Button>
+
+        {/* Create a trip modal */}
         <TTModal
           open={opneCreateTripModal}
           setOpen={setOpneCreateTripModal}
@@ -130,7 +153,11 @@ const TravelPostsPage = () => {
             {/* <Button>Save as draft</Button> */}{" "}
             {/* Will think about the feature */}
             <Stack flexDirection={"row"} justifyContent={"center"}>
-              <Button type="submit" sx={{ mt: 2 }}>
+              <Button
+                type="submit"
+                sx={{ mt: 2 }}
+                disabled={isCreateButtonClick}
+              >
                 Create
               </Button>
             </Stack>
