@@ -6,15 +6,21 @@ import TTForm from "@/components/Forms/TTForm";
 import TTInput from "@/components/Forms/TTInput";
 import TTSelect from "@/components/Forms/TTSelect";
 import TTModal from "@/components/Shared/TTModal/TTModal";
-import { colors } from "@/constants";
+import { colors, dataGridHeaderDesign } from "@/constants";
 import { travelTypes } from "@/constants/trip.constant";
 import imgbbImageUploader from "@/helpers/imgbb/imgbbImageUploader";
-import { useCreateATripMutation } from "@/redux/api/tripsApi";
-import { Box, Button, Grid, Stack } from "@mui/material";
+import {
+  useCreateATripMutation,
+  useGetAllTripsQuery,
+} from "@/redux/api/tripsApi";
+import { Box, Button, Grid, IconButton, Stack } from "@mui/material";
 import Image from "next/image";
 import React, { useState } from "react";
 import { FieldValues } from "react-hook-form";
 import { toast } from "sonner";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { dateFormatter } from "@/utils/dateFormater";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const TravelPostsPage = () => {
   const [opneCreateTripModal, setOpneCreateTripModal] =
@@ -23,8 +29,11 @@ const TravelPostsPage = () => {
   const [isCreateButtonClick, setIsCreateButtonClick] =
     useState<boolean>(false);
 
-  // redux hanlde
+  // redux consume
   const [createATrip] = useCreateATripMutation();
+  const { data, isLoading } = useGetAllTripsQuery({});
+
+  console.log(data);
 
   const handlePostSubmit = async (values: FieldValues) => {
     setIsCreateButtonClick(true);
@@ -63,12 +72,80 @@ const TravelPostsPage = () => {
     }
   };
 
+  const handlePostDelete = (id: string) => {
+    console.log(id, "post id");
+  };
+
+  const columns: GridColDef[] = [
+    {
+      field: "destination",
+      headerName: "Destination",
+      width: 300,
+    },
+    {
+      field: "travelType",
+      headerName: "Travel Type",
+      width: 250,
+    },
+    {
+      field: "budget",
+      headerName: "Budget",
+      width: 250,
+      renderCell: ({ row }) => {
+        return <Box>{`${row?.budget} Tk`}</Box>;
+      },
+    },
+    {
+      field: "startDate",
+      headerName: "Start Date",
+      width: 250,
+      renderCell: ({ row }) => {
+        return <Box>{dateFormatter(row?.startDate)}</Box>;
+      },
+    },
+    {
+      field: "endDate",
+      headerName: "End Date",
+      width: 250,
+      renderCell: ({ row }) => {
+        return <Box>{dateFormatter(row?.endDate)}</Box>;
+      },
+    },
+    {
+      field: "action",
+      headerName: "Action",
+      flex: 1,
+      renderCell: ({ row }) => {
+        return (
+          <IconButton
+            onClick={() => handlePostDelete(row.id)}
+            aria-label="delete"
+          >
+            <DeleteIcon />
+          </IconButton>
+        );
+      },
+    },
+  ];
+
   return (
     <Box>
       <Box>
         <Button onClick={() => setOpneCreateTripModal(true)}>
           Create A Trip
         </Button>
+
+        {!isLoading ? (
+          <Box sx={{ mt: 2 }}>
+            <DataGrid
+              rows={data?.data}
+              columns={columns}
+              sx={dataGridHeaderDesign}
+            />
+          </Box>
+        ) : (
+          <h1>Loading...</h1>
+        )}
 
         {/* Create a trip modal */}
         <TTModal

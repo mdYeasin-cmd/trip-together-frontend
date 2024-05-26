@@ -1,6 +1,5 @@
+import { IMGBB_API_KEY } from "@/constants";
 import axios from "axios";
-
-const apiKey = "";
 
 const imgbbImageUploader = async (file: Blob) => {
   try {
@@ -9,7 +8,7 @@ const imgbbImageUploader = async (file: Blob) => {
     formData.append("image", file);
 
     const result = await axios.post(
-      `https://api.imgbb.com/1/upload?key=${apiKey}`,
+      `https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`,
       formData,
       {
         headers: {
