@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const apiKey = "ff163a54aef672c738d464c47e95eeaf";
+const apiKey = "";
 
 const imgbbImageUploader = async (file: Blob) => {
   try {
