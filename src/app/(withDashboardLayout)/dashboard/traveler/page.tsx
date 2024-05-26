@@ -1,7 +1,7 @@
 const TravelerPage = () => {
   return (
     <div>
-      <h1>Traveler Dashboard</h1>
+      <h1>Traveler Profile Page</h1>
     </div>
   );
 };

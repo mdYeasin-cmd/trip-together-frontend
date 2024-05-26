@@ -9,6 +9,8 @@ type TInputProps = {
   fullWidth?: boolean;
   sx?: SxProps;
   required?: boolean;
+  multiline?: boolean;
+  minRows?: number;
 };
 
 const TTInput = ({
@@ -19,6 +21,8 @@ const TTInput = ({
   fullWidth,
   sx,
   required,
+  multiline = false,
+  minRows = 1,
 }: TInputProps) => {
   const { control } = useFormContext();
   return (
@@ -38,6 +42,8 @@ const TTInput = ({
           required={required}
           error={!!error?.message}
           helperText={error?.message}
+          multiline={multiline}
+          minRows={minRows}
         />
       )}
     />
