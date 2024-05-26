@@ -8,6 +8,7 @@ import TTSelect from "@/components/Forms/TTSelect";
 import TTModal from "@/components/Shared/TTModal/TTModal";
 import { colors } from "@/constants";
 import { travelTypes } from "@/constants/trip.constant";
+import imgbbImageUploader from "@/helpers/imgbb/imgbbImageUploader";
 import { Box, Button, Grid, InputBase, Stack, TextField } from "@mui/material";
 import Image from "next/image";
 import React, { useState } from "react";
@@ -21,12 +22,24 @@ const TravelPostsPage = () => {
 
   console.log(files, "files here");
 
-  const handlePostSubmit = (values: FieldValues) => {
-    console.log(values, "values");
+  const handlePostSubmit = async (values: FieldValues) => {
     if (!values?.files?.length) {
       toast.error("Please upload at least 1 image.");
       return;
     }
+
+    const { files, ...createTripData } = values;
+    const fileList = Array.from(files);
+
+    const photoPromises = fileList.map((file) => {
+      return imgbbImageUploader(file as Blob);
+    });
+
+    const photoList = await Promise.all(photoPromises);
+
+    createTripData.photos = photoList.map(
+      (photo) => photo?.data?.data?.display_url
+    );
   };
 
   return (
