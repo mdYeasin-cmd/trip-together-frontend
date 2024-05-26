@@ -1,14 +1,18 @@
 "use client";
 
+import TTDatePicker from "@/components/Forms/TTDatePicker";
 import TTFileUploader from "@/components/Forms/TTFileUploader";
 import TTForm from "@/components/Forms/TTForm";
 import TTInput from "@/components/Forms/TTInput";
+import TTSelect from "@/components/Forms/TTSelect";
 import TTModal from "@/components/Shared/TTModal/TTModal";
 import { colors } from "@/constants";
+import { travelTypes } from "@/constants/trip.constant";
 import { Box, Button, Grid, InputBase, Stack, TextField } from "@mui/material";
 import Image from "next/image";
 import React, { useState } from "react";
 import { FieldValues } from "react-hook-form";
+import { toast } from "sonner";
 
 const TravelPostsPage = () => {
   const [opneCreateTripModal, setOpneCreateTripModal] =
@@ -18,7 +22,11 @@ const TravelPostsPage = () => {
   console.log(files, "files here");
 
   const handlePostSubmit = (values: FieldValues) => {
-    console.log(values, "form values");
+    console.log(values, "values");
+    if (!values?.files?.length) {
+      toast.error("Please upload at least 1 image.");
+      return;
+    }
   };
 
   return (
@@ -81,20 +89,20 @@ const TravelPostsPage = () => {
                 />
               </Grid>
               <Grid item xs={6}>
-                <TTInput
+                <TTSelect
                   name="travelType"
-                  label="Travel type"
-                  fullWidth={true}
+                  items={travelTypes}
+                  label="Travel Type"
                 />
               </Grid>
               <Grid item xs={6}>
                 <TTInput name="budget" label="Budget" fullWidth={true} />
               </Grid>
               <Grid item xs={6}>
-                <TTInput name="startDate" label="Start Date" fullWidth={true} />
+                <TTDatePicker name="startDate" label="Start Date" />
               </Grid>
               <Grid item xs={6}>
-                <TTInput name="endDate" label="End Date" fullWidth={true} />
+                <TTDatePicker name="endDate" label="End Date" />
               </Grid>
               <Grid item xs={12}>
                 <TTInput
