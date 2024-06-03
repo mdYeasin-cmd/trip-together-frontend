@@ -5,17 +5,23 @@ import CardMedia from "@mui/material/CardMedia";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import EventIcon from "@mui/icons-material/Event";
+import { TTrip } from "@/types";
+import { dateFormatter } from "@/utils/dateFormater";
 
-const TravelCard = () => {
+type TProps = {
+  post: TTrip;
+};
+
+const TravelCard = ({ post }: TProps) => {
+  const { destination, description, startDate, endDate, photos } = post;
+
   return (
     <Card sx={{ maxWidth: "99%" }}>
       <CardMedia
         component="img"
         alt="green iguana"
         height="200"
-        image={
-          "https://cdn.pixabay.com/photo/2018/03/20/14/00/sea-3243357_1280.jpg"
-        }
+        image={photos?.[0]}
       />
       <CardContent>
         <Typography
@@ -24,7 +30,7 @@ const TravelCard = () => {
           component="div"
           sx={{ textAlign: "center" }}
         >
-          Cox&apos;s Bazar
+          {destination}
         </Typography>
 
         <Typography
@@ -37,7 +43,9 @@ const TravelCard = () => {
           }}
         >
           <EventIcon />
-          <Typography component={"span"}>22-05-2024</Typography>
+          <Typography component={"span"} sx={{ marginLeft: "5px" }}>
+            {dateFormatter(startDate)} - {dateFormatter(endDate)}
+          </Typography>
         </Typography>
 
         <Typography
@@ -45,10 +53,7 @@ const TravelCard = () => {
           color="text.secondary"
           sx={{ textAlign: "justify" }}
         >
-          Escape to Cox&apos;s Bazar, Bangladesh, where endless golden sands
-          meet the Bay of Bengal. Immerse yourself in the world&apos;s longest
-          natural beach, perfect for relaxation, adventure, and cultural
-          exploration.
+          {description}
         </Typography>
       </CardContent>
       <CardActions sx={{ display: "flex", justifyContent: "center", pb: 2 }}>

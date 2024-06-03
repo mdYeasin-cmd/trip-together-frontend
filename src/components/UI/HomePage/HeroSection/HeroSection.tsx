@@ -3,10 +3,23 @@ import { colors } from "@/constants";
 import { Box, Button, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import React from "react";
+import dynamic from "next/dynamic";
 
 const HeroSection = () => {
+  const ShareTripButton = dynamic(
+    () => import("@/components/UI/HomePage/HeroSection/ShareTripButton"),
+    { ssr: false }
+  );
+
   return (
-    <Stack sx={{ display: "flex", flexDirection: "row" }}>
+    <Stack
+      sx={{
+        display: "flex",
+        flexDirection: "row",
+        backgroundColor: "#c4e7e3",
+        height: "92vh",
+      }}
+    >
       <Box sx={{ flex: 1 }}>
         <Box
           sx={{
@@ -39,7 +52,7 @@ const HeroSection = () => {
               whole new dimension to your adventure. pen_spark
             </Typography>
 
-            <Button>Share Your Trip</Button>
+            <ShareTripButton />
           </Box>
         </Box>
       </Box>

@@ -35,8 +35,6 @@ const TravelPostsPage = () => {
   const { data, isLoading } = useGetAllTripsQuery({});
   const [deleteATrip] = useDeleteATripMutation();
 
-  console.log(data);
-
   const handlePostSubmit = async (values: FieldValues) => {
     setIsCreateButtonClick(true);
     const toastId = toast.loading("Please wait...");
@@ -46,6 +44,14 @@ const TravelPostsPage = () => {
         setIsCreateButtonClick(false);
         return;
       }
+
+      // if (values?.description?.length < 200) {
+      //   toast.error("Description must be at least 200 characters.", {
+      //     id: toastId,
+      //   });
+      //   setIsCreateButtonClick(false);
+      //   return;
+      // }
 
       const { files, ...createTripData } = values;
       const fileList = Array.from(files);
@@ -233,7 +239,7 @@ const TravelPostsPage = () => {
               <Grid item xs={12}>
                 <TTInput
                   name="description"
-                  label="Description"
+                  label="Description (At least 200 characters)"
                   fullWidth={true}
                   multiline={true}
                   minRows={5}

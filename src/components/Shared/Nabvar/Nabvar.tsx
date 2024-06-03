@@ -17,7 +17,10 @@ const Nabvar = () => {
   return (
     <Stack
       sx={{
-        borderBottom: "1px solid lightgray",
+        // borderBottom: "1px solid lightgray",
+        // backgroundColor: "#d8efec",
+        // boxShadow: 1,
+        borderBottom: "1px solid #c4e7e3",
       }}
     >
       <Container>
@@ -44,6 +47,17 @@ const Nabvar = () => {
               href={"/"}
             >
               Home
+            </Typography>
+
+            <Typography
+              sx={{
+                borderBottom:
+                  pathname === "/travels" ? `2px solid ${colors.PRIMARY} ` : "",
+              }}
+              component={Link}
+              href={"/travels"}
+            >
+              Travels
             </Typography>
 
             <Typography

@@ -10,13 +10,9 @@ export default function HomePage() {
     <>
       <HeroSection />
       <SearchSection />
-
       <TravelPostSection />
-
       <WhyChooseUs />
-
       <Newsletter />
-
       <Footer />
     </>
   );
