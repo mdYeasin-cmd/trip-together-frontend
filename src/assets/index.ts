@@ -8,6 +8,7 @@ import linkedinIcon from "./images/linkedin.png";
 import coxsBazarImage from "./images/cox's-bazar.jpg";
 import jaflongImage from "./images/jaflong.jpg";
 import whyChooseUs from "./images/why-choose-us.png";
+import comingSoon from "./images/coming-soon.png";
 
 export const assets = {
   logo,
@@ -20,4 +21,5 @@ export const assets = {
   coxsBazarImage,
   jaflongImage,
   whyChooseUs,
+  comingSoon,
 };

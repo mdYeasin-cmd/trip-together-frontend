@@ -53,7 +53,9 @@ const TravelCard = ({ post }: TProps) => {
           color="text.secondary"
           sx={{ textAlign: "justify" }}
         >
-          {description}
+          {description?.length > 180
+            ? `${description.slice(0, 180)}...`
+            : description}
         </Typography>
       </CardContent>
       <CardActions sx={{ display: "flex", justifyContent: "center", pb: 2 }}>
