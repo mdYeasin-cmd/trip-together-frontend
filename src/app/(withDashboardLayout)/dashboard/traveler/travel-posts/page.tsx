@@ -50,16 +50,14 @@ const createATripValidationSchema = z.object({
     required_error: "Budget is required",
     invalid_type_error: "Budget must be a number.",
   }),
-  startDate: z.string({
-    required_error: "Start date is required",
-  }),
-  endDate: z.string({
-    required_error: "End date is required",
-  }),
-  description: z.string({
-    required_error: "Description is required.",
-    invalid_type_error: "Description must be a string.",
-  }),
+  startDate: z.any(),
+  endDate: z.any(),
+  description: z
+    .string({
+      required_error: "Description is required.",
+      invalid_type_error: "Description must be a string.",
+    })
+    .min(200, "Please add at least 200 characters description."),
 });
 
 const defaultValues = {
@@ -213,8 +211,7 @@ const TravelPostsPage = () => {
         >
           <TTForm
             onSubmit={handlePostSubmit}
-            // resolver={zodResolver(createATripValidationSchema)}
-            defaultValues={defaultValues}
+            resolver={zodResolver(createATripValidationSchema)}
           >
             <Grid container spacing={2}>
               <Grid item xs={12}>
