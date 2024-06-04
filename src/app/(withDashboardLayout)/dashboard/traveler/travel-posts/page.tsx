@@ -22,6 +22,55 @@ import { toast } from "sonner";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { dateFormatter } from "@/utils/dateFormater";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import dayjs from "dayjs";
+
+const createATripValidationSchema = z.object({
+  files: z.custom<FileList>().superRefine((files, ctx) => {
+    if (!(files instanceof FileList)) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        fatal: true,
+        message: "At least one photo is required",
+      });
+
+      return z.NEVER;
+    }
+  }),
+  destination: z.string({
+    required_error: "Destination is required.",
+    invalid_type_error: "Destination must be a string.",
+  }),
+  travelType: z.string({
+    required_error: "Travel type is required.",
+    invalid_type_error: "Travel type must be a string.",
+  }),
+  budget: z.string({
+    required_error: "Budget is required",
+    invalid_type_error: "Budget must be a number.",
+  }),
+  startDate: z.string({
+    required_error: "Start date is required",
+  }),
+  endDate: z.string({
+    required_error: "End date is required",
+  }),
+  description: z.string({
+    required_error: "Description is required.",
+    invalid_type_error: "Description must be a string.",
+  }),
+});
+
+const defaultValues = {
+  files: "",
+  destination: "",
+  travelType: "",
+  budget: "",
+  startDate: dayjs(new Date().toDateString()),
+  endDate: dayjs(new Date().toDateString()),
+  description: "",
+};
 
 const TravelPostsPage = () => {
   const [opneCreateTripModal, setOpneCreateTripModal] =
@@ -36,22 +85,11 @@ const TravelPostsPage = () => {
   const [deleteATrip] = useDeleteATripMutation();
 
   const handlePostSubmit = async (values: FieldValues) => {
+    console.log(values, "Submit values");
     setIsCreateButtonClick(true);
     const toastId = toast.loading("Please wait...");
     try {
-      if (!values?.files?.length) {
-        toast.error("Please upload at least 1 image.", { id: toastId });
-        setIsCreateButtonClick(false);
-        return;
-      }
-
-      // if (values?.description?.length < 200) {
-      //   toast.error("Description must be at least 200 characters.", {
-      //     id: toastId,
-      //   });
-      //   setIsCreateButtonClick(false);
-      //   return;
-      // }
+      console.log(values, "Submit values");
 
       const { files, ...createTripData } = values;
       const fileList = Array.from(files);
@@ -173,7 +211,11 @@ const TravelPostsPage = () => {
           title="Create a trip"
           fullWidth={true}
         >
-          <TTForm onSubmit={handlePostSubmit}>
+          <TTForm
+            onSubmit={handlePostSubmit}
+            // resolver={zodResolver(createATripValidationSchema)}
+            defaultValues={defaultValues}
+          >
             <Grid container spacing={2}>
               <Grid item xs={12}>
                 <Stack justifyContent={"center"} flexDirection={"row"}>
@@ -228,7 +270,12 @@ const TravelPostsPage = () => {
                 />
               </Grid>
               <Grid item xs={6}>
-                <TTInput name="budget" label="Budget" fullWidth={true} />
+                <TTInput
+                  name="budget"
+                  label="Budget"
+                  fullWidth={true}
+                  type="number"
+                />
               </Grid>
               <Grid item xs={6}>
                 <TTDatePicker name="startDate" label="Start Date" />
@@ -253,6 +300,9 @@ const TravelPostsPage = () => {
                 type="submit"
                 sx={{ mt: 2 }}
                 disabled={isCreateButtonClick}
+                onClick={() => {
+                  console.log("create button clicked");
+                }}
               >
                 Create
               </Button>
