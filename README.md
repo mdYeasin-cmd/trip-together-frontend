@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Trip Together - A Travel Buddy Finder App
+
+Trip Together is a travel buddy finder application where an enthusiast traveller can find his/her travel mate for best travel experience. Trip Together team ensure that all registered traveller is authenticate and trustable.
+
+## Project Details
+
+- Enthusiast traveller can log in as a traveller by providing his/her information
+- A traveller can create a travel trip
+- A traveller can request for a travel trip
+- Travel trip posterer can accept travel request
+- Trip Together admin can handle all users and travel requests
+
+## Tools Used
+
+- [TypeScript](https://www.typescriptlang.org/) - TypeScript
+- [Next.js](https://nextjs.org/) - React framework
+- [Mui](https://mui.com/) - Material UI - React UI library
+- [Redux Toolkit](https://redux-toolkit.js.org/) - Redux Toolkit - React state management
+- [Axios](https://axios-http.com/docs/intro) - HTTP client
+- [react-hook-form](https://react-hook-form.com/) - React hook form - Form validation library
+- [Zod](https://zod.dev/) - TypeScript validation
+- [JWT](https://jwt.io/) - JSON Web Token
+- [Vercel](https://vercel.com/) - (Vercel) Serverless platform for hosting applications
 
 ## Getting Started
 
-First, run the development server:
+First, you need to setup the backend server for the project. Then you need to follow the below steps for running the application locally. You can follow this [backend server setup instructios](https://github.com/mdYeasin-cmd/trip-together-backend).
+
+# Run Locally
+
+## 1. Clone the repository
+
+```bash
+git clone https://github.com/mdYeasin-cmd/trip-together-frontend.git
+```
+
+### Go to the project directory
+
+```bash
+ cd trip-together-frontend
+```
+
+## 2. Install the dependencies
+
+```bash
+npm install
+```
+
+## 3. Rename the file named `.env.example` to `.env` and then Add yours environment variables
+
+## 4. Start the server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+<br>
+<br>
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+# [Deployed Client Link](https://assignment-9-client.vercel.app/)
