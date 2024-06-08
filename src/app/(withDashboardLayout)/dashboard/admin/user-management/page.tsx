@@ -1,22 +1,47 @@
 "use client";
 
-import { useGetAllUsersQuery } from "@/redux/api/usersApi";
+import {
+  useChangeUserStatusMutation,
+  useGetAllUsersQuery,
+} from "@/redux/api/usersApi";
 import { Box, Button, IconButton, Stack } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { dataGridHeaderDesign } from "@/constants";
+import { UserStatus, dataGridHeaderDesign } from "@/constants";
 import { IUserData } from "@/types";
 import { useState } from "react";
 import TTAlert from "@/components/Shared/TTAlert/TTAlert";
+import { toast } from "sonner";
 
 const UserManagementPage = () => {
-  const [openStatusAlert, setOpenStatusAlert] = useState(false);
+  const [openUserBlockAlert, setOpenUserBlockAlert] = useState(false);
+  const [userDetails, setUserDetails] = useState<Partial<IUserData>>({});
 
   const { data, isLoading } = useGetAllUsersQuery(undefined);
+  const [changeUserStatus] = useChangeUserStatusMutation();
 
   const users = data;
 
-  const handleUserDelete = (userId: string) => {};
+  const handleUserBlock = async () => {
+    const toastId = toast.loading("Please wait...");
+    try {
+      const userBlockData = {
+        userId: userDetails.id,
+        status: UserStatus.BLOCKED,
+      };
+
+      const res = await changeUserStatus(userBlockData).unwrap();
+
+      if (res.id) {
+        toast.success(`User is blocked successfully`, { id: toastId });
+        setOpenUserBlockAlert(false);
+        setUserDetails({});
+      }
+    } catch (error) {
+      toast.error("User blocked process is failed", { id: toastId });
+      console.log(error);
+    }
+  };
 
   const columns: GridColDef[] = [
     {
@@ -46,20 +71,29 @@ const UserManagementPage = () => {
       renderCell: ({ row }) => {
         return (
           <Box>
-            <Button
-              onClick={() => setOpenStatusAlert(true)}
-              size="small"
-              sx={{ py: "3px", px: 0, mr: 2 }}
-            >
-              Block
-            </Button>
-
-            <IconButton
-              onClick={() => handleUserDelete(row.id)}
-              aria-label="delete"
-            >
-              <DeleteIcon />
-            </IconButton>
+            {row.status === UserStatus.ACTIVE ? (
+              <Button
+                onClick={() => {
+                  setOpenUserBlockAlert(true);
+                  setUserDetails(row);
+                }}
+                size="small"
+                sx={{ py: "3px", px: 0, mr: 2 }}
+              >
+                Block
+              </Button>
+            ) : (
+              <Button
+                // onClick={() => {
+                //   setOpenUserBlockAlert(true);
+                //   setUserDetails(row);
+                // }}
+                size="small"
+                sx={{ py: "3px", px: 0, mr: 2 }}
+              >
+                Active
+              </Button>
+            )}
           </Box>
         );
       },
@@ -84,12 +118,10 @@ const UserManagementPage = () => {
       </Box>
 
       <TTAlert
-        message={`Are you sure you want to block this user? If you are not sure you want to block this user`}
-        open={openStatusAlert}
-        setOpen={setOpenStatusAlert}
-        onYesClick={() => {
-          setOpenStatusAlert(false);
-        }}
+        message={`Are you sure you want to block ${userDetails?.name}?`}
+        open={openUserBlockAlert}
+        setOpen={setOpenUserBlockAlert}
+        onYesClick={handleUserBlock}
       />
     </>
   );
