@@ -57,4 +57,4 @@ npm run dev
 <br>
 <br>
 
-# [Deployed Client Link](https://assignment-9-client.vercel.app/)
+# [Deployed Client Link](https://trip-together-frontend.vercel.app/)
