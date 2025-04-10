@@ -30,7 +30,9 @@ const Nabvar = () => {
           justifyContent={"space-between"}
           alignItems={"center"}
         >
-          <Logo />
+          <Link href={"/"}>
+            <Logo />
+          </Link>
 
           <Stack
             direction={"row"}

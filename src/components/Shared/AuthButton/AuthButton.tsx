@@ -15,12 +15,15 @@ const AuthButton = () => {
   return (
     <>
       {userInfo?.id ? (
-        <Button
-          onClick={handleLogout}
-          sx={{ backgroundColor: colors.SECONDARY }}
-        >
-          Logout
-        </Button>
+        <>
+          <Button onClick={() => router.push("/dashboard")}>Dashboard</Button>
+          <Button
+            onClick={handleLogout}
+            sx={{ backgroundColor: colors.SECONDARY }}
+          >
+            Logout
+          </Button>
+        </>
       ) : (
         <Button component={Link} href={"/login"}>
           Login

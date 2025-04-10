@@ -16,7 +16,7 @@ const TravelCard = ({ post }: TProps) => {
   const { destination, description, startDate, endDate, photos } = post;
 
   return (
-    <Card sx={{ maxWidth: "99%" }}>
+    <Card sx={{ maxWidth: "99%", height: "500px" }}>
       <CardMedia
         component="img"
         alt="green iguana"
@@ -55,7 +55,7 @@ const TravelCard = ({ post }: TProps) => {
         >
           {description?.length > 180
             ? `${description.slice(0, 180)}...`
-            : description}
+            : `${description} ${" ".repeat(180)}`}
         </Typography>
       </CardContent>
       <CardActions sx={{ display: "flex", justifyContent: "center", pb: 2 }}>
