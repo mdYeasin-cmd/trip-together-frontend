@@ -99,7 +99,7 @@ const TravelPostsPage = () => {
       const photoList = await Promise.all(photoPromises);
 
       createTripData.photos = photoList.map(
-        (photo) => photo?.data?.data?.display_url
+        (photo) => photo?.data?.data?.display_url,
       );
       createTripData.budget = Number(createTripData.budget);
 

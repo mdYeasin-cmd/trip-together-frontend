@@ -17,7 +17,7 @@ const TravelPostSection = async () => {
   return (
     <Container>
       <Grid container spacing={2} my={4}>
-        {travelPosts.map((travelPost: TTrip, index: number) => (
+        {travelPosts?.map((travelPost: TTrip, index: number) => (
           <Grid key={index} item md={4}>
             <TravelCard post={travelPost} />
           </Grid>

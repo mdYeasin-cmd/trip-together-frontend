@@ -3,7 +3,7 @@ import { BACKEND_API_URL } from "@/constants";
 import { FieldValues } from "react-hook-form";
 
 export const userLogin = async (data: FieldValues) => {
-  const res = await fetch(`${BACKEND_API_URL}/login`, {
+  const res = await fetch(`${BACKEND_API_URL}/auth/login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
