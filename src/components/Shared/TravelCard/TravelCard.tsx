@@ -7,13 +7,14 @@ import Typography from "@mui/material/Typography";
 import EventIcon from "@mui/icons-material/Event";
 import { TTrip } from "@/types";
 import { dateFormatter } from "@/utils/dateFormater";
+import Link from "next/link";
 
 type TProps = {
   post: TTrip;
 };
 
 const TravelCard = ({ post }: TProps) => {
-  const { destination, description, startDate, endDate, photos } = post;
+  const { id, destination, description, startDate, endDate, photos } = post;
 
   return (
     <Card sx={{ maxWidth: "99%", height: "500px" }}>
@@ -59,7 +60,9 @@ const TravelCard = ({ post }: TProps) => {
         </Typography>
       </CardContent>
       <CardActions sx={{ display: "flex", justifyContent: "center", pb: 2 }}>
-        <Button>View Details</Button>
+        <Link href={`/travels/${id}`}>
+          <Button>View Details</Button>
+        </Link>
       </CardActions>
     </Card>
   );

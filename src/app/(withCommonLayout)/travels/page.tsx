@@ -10,8 +10,6 @@ const TravelsPage = async () => {
 
   const travelPosts = data?.data?.data;
 
-  // console.log(data?.data?.data, "data");
-
   return (
     <Container>
       <SearchSection />

@@ -12,8 +12,6 @@ const TravelPostSection = async () => {
 
   const travelPosts = data?.data?.data;
 
-  console.log(travelPosts, "data");
-
   return (
     <Container>
       <Grid container spacing={2} my={4}>
