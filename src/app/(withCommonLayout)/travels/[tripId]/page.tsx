@@ -1,12 +1,19 @@
-import { BACKEND_API_URL } from "@/constants";
+"use client";
+
+import TTAlert from "@/components/Shared/TTAlert/TTAlert";
+import TTModal from "@/components/Shared/TTModal/TTModal";
 import { colors } from "@/constants";
+import { useGetATripQuery } from "@/redux/api/tripsApi";
+import { getUserInfo } from "@/services/auth.service";
 import { dateFormatter } from "@/utils/dateFormater";
+import { redirectToLogin } from "@/utils/redirect";
 import EventIcon from "@mui/icons-material/Event";
 import LocationOnRoundedIcon from "@mui/icons-material/LocationOnRounded";
 import PaidRoundedIcon from "@mui/icons-material/PaidRounded";
 import StyleRoundedIcon from "@mui/icons-material/StyleRounded";
 import {
   Box,
+  Button,
   Container,
   Divider,
   Grid,
@@ -14,21 +21,42 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 
-const TripDetailsPage = async ({
-  params,
-}: {
-  params: Promise<{ tripId: string }>;
-}) => {
-  const { tripId } = await params;
+const TripDetailsPage = ({ params }: { params: { tripId: string } }) => {
+  const { tripId } = params;
+  const router = useRouter();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
 
-  const res = await fetch(`${BACKEND_API_URL}/trips/${tripId}`);
+  const [requestToJoin, setRequestToJoin] = useState<boolean>(false);
+  const [inviteToJoin, setInviteToJoin] = useState<boolean>(false);
 
-  const data = await res.json();
+  const userInfo = getUserInfo();
 
-  const tripDetails = data?.data;
+  const { data, isLoading } = useGetATripQuery(tripId);
+
+  const tripDetails = data;
+
+  const handleRequestToJoin = (): void => {
+    console.log("Requst to join");
+
+    setRequestToJoin(false);
+  };
+
+  const handleInviteToJoin = (): void => {
+    console.log("Invite to join");
+
+    setInviteToJoin(false);
+  };
+
+  if (isLoading) {
+    return <>Loading...</>;
+  }
 
   const {
+    userId,
     photos,
     destination,
     travelType,
@@ -56,22 +84,50 @@ const TripDetailsPage = async ({
               alignItems={{ xs: "flex-start", md: "flex-end" }}
               gap={2}
             >
-              <Box>
-                <Stack direction="row" alignItems="center" gap={1}>
-                  <LocationOnRoundedIcon
-                    sx={{
-                      color: colors.SECONDARY,
-                      fontSize: { xs: 28, md: 34 },
-                    }}
-                  />
-                  <Typography
-                    variant="h4"
-                    component="h1"
-                    fontWeight={800}
-                    sx={{ lineHeight: 1.1 }}
-                  >
-                    {destination || "Trip Details"}
-                  </Typography>
+              <Box sx={{ width: "100%" }}>
+                <Stack
+                  direction="row"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  gap={1}
+                  sx={{ width: "100%" }}
+                >
+                  <Box>
+                    <LocationOnRoundedIcon
+                      sx={{
+                        color: colors.SECONDARY,
+                        fontSize: { xs: 28, md: 34 },
+                      }}
+                    />
+                    <Typography
+                      variant="h4"
+                      component="h1"
+                      fontWeight={800}
+                      sx={{ lineHeight: 1.1 }}
+                    >
+                      {destination || "Trip Details"}
+                    </Typography>
+                  </Box>
+                  {userInfo?.id === userId ? (
+                    <Box>
+                      <Button onClick={() => setInviteToJoin(true)}>
+                        invite to join
+                      </Button>
+                    </Box>
+                  ) : (
+                    <Box>
+                      <Button
+                        onClick={() => {
+                          if (!isLoading && !userInfo?.id) {
+                            redirectToLogin(router, pathname, searchParams);
+                          }
+                          setRequestToJoin(true);
+                        }}
+                      >
+                        request to join
+                      </Button>
+                    </Box>
+                  )}
                 </Stack>
               </Box>
             </Stack>
@@ -203,6 +259,22 @@ const TripDetailsPage = async ({
           </Typography>
         </Paper>
       </Container>
+
+      <TTAlert
+        message={`Are you sure you want to join this trip?`}
+        open={requestToJoin}
+        setOpen={setRequestToJoin}
+        onYesClick={handleRequestToJoin}
+      />
+
+      <TTModal
+        open={inviteToJoin}
+        setOpen={setInviteToJoin}
+        title="Invite to join a trip"
+        fullWidth={true}
+      >
+        <h1> Invite to join modal </h1>
+      </TTModal>
     </Box>
   );
 };

@@ -21,6 +21,14 @@ const tripsApi = baseApi.injectEndpoints({
       providesTags: [tagTypes.trips],
     }),
 
+    getATrip: build.query({
+      query: (id) => ({
+        url: `/trips/${id}`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.trips],
+    }),
+
     deleteATrip: build.mutation({
       query: (id) => ({
         url: `/trips/${id}`,
@@ -34,5 +42,6 @@ const tripsApi = baseApi.injectEndpoints({
 export const {
   useCreateATripMutation,
   useGetAllTripsQuery,
+  useGetATripQuery,
   useDeleteATripMutation,
 } = tripsApi;

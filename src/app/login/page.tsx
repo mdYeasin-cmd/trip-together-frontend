@@ -11,7 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Box, Button, Container, Grid, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { FieldValues } from "react-hook-form";
 import { toast } from "sonner";
@@ -29,7 +29,10 @@ const defaultValues = {
 
 const LoginPage = () => {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [error, setError] = useState();
+
+  const redirect = searchParams.get("redirect");
 
   const handleLogin = async (data: FieldValues) => {
     try {
@@ -38,7 +41,11 @@ const LoginPage = () => {
       if (res.success) {
         toast.success(res.message);
         storeUserInfo({ accessToken: res?.data?.token });
-        router.push("/dashboard");
+        if (redirect && redirect.startsWith("/")) {
+          router.push(redirect);
+        } else {
+          router.push("/dashboard");
+        }
       } else {
         setError(res.message);
       }

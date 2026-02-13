@@ -14,7 +14,7 @@ import TTAlert from "@/components/Shared/TTAlert/TTAlert";
 import { toast } from "sonner";
 
 const UserManagementPage = () => {
-  const [openUserBlockAlert, setOpenUserBlockAlert] = useState(false);
+  const [openUserBlockAlert, setOpenUserBlockAlert] = useState<boolean>(false);
   const [userDetails, setUserDetails] = useState<Partial<IUserData>>({});
 
   const { data, isLoading } = useGetAllUsersQuery(undefined);
