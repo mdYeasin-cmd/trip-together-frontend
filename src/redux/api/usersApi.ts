@@ -11,6 +11,14 @@ const usersApi = baseApi.injectEndpoints({
       providesTags: [tagTypes.users],
     }),
 
+    getATraveler: build.query({
+      query: (travelerId) => ({
+        url: `/users/travelers/${travelerId}`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.users],
+    }),
+
     changeUserStatus: build.mutation({
       query: (data) => ({
         url: "/change-user-status",
@@ -26,4 +34,8 @@ const usersApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useGetAllUsersQuery, useChangeUserStatusMutation } = usersApi;
+export const {
+  useGetAllUsersQuery,
+  useGetATravelerQuery,
+  useChangeUserStatusMutation,
+} = usersApi;
