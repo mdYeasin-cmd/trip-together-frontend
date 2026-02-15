@@ -19,7 +19,7 @@ import {
 import React from "react";
 import { getInitials } from "@/utils/avatar";
 import { getStatusChipColor } from "@/utils/chip-color";
-import ProfileSkeleton from "@/components/Skeleton/ProfileSkeleton";
+import ProfileSkeleton from "@/components/Skeletons/ProfileSkeleton";
 
 const TravelerPage = ({ params }: { params: { travelerId: string } }) => {
   const { travelerId } = params;

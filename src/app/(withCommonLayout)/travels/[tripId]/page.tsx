@@ -2,7 +2,12 @@
 
 import TTAlert from "@/components/Shared/TTAlert/TTAlert";
 import TTModal from "@/components/Shared/TTModal/TTModal";
-import { UserStatus, colors } from "@/constants";
+import TripDetailsSkeleton from "@/components/Skeletons/TripDetailsSkeleton";
+import { colors } from "@/constants";
+import {
+  useGetRequestEligibilityQuery,
+  useRequestToJoinMutation,
+} from "@/redux/api/travelBuddiesApi";
 import { useGetATripQuery } from "@/redux/api/tripsApi";
 import { useGetAllUsersQuery } from "@/redux/api/usersApi";
 import { getUserInfo } from "@/services/auth.service";
@@ -38,13 +43,7 @@ import {
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
-
-type TTraveller = {
-  id: string;
-  name?: string;
-  status?: string;
-  email?: string;
-};
+import { toast } from "sonner";
 
 const TripDetailsPage = ({ params }: { params: { tripId: string } }) => {
   const { tripId } = params;
@@ -52,21 +51,38 @@ const TripDetailsPage = ({ params }: { params: { tripId: string } }) => {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const [requestToJoin, setRequestToJoin] = useState<boolean>(false);
+  const [requestToJoinModal, setRequestToJoinModal] = useState<boolean>(false);
   const [inviteToJoin, setInviteToJoin] = useState<boolean>(false);
   const [activeInviteTab, setActiveInviteTab] = useState<number>(0);
   const [inviteAlert, setInviteAlert] = useState<boolean>(false);
 
   const userInfo = getUserInfo();
 
+  const { data: requestEligibility, isLoading: isRequestEligibilityLoading } =
+    useGetRequestEligibilityQuery({
+      userId: userInfo?.id,
+      tripId: tripId,
+    });
   const { data: tripDetails, isLoading } = useGetATripQuery(tripId);
   const { data: travellerList, isLoading: isLoadingTravellers } =
     useGetAllUsersQuery(undefined);
+  const [requestToJoin] = useRequestToJoinMutation();
 
-  const handleRequestToJoin = (): void => {
-    console.log("Requst to join");
+  const handleRequestToJoin = async (tripId: string, userId: string) => {
+    try {
+      const res = await requestToJoin({
+        tripId,
+        userId,
+      });
 
-    setRequestToJoin(false);
+      if (res?.data?.id) {
+        toast.success("Requst sent successfully.");
+        setRequestToJoinModal(false);
+      }
+    } catch (error) {
+      toast.error("Failed to sent trip request.");
+      console.log(error, "request to join error");
+    }
   };
 
   const handleInviteToJoin = (): void => {
@@ -82,7 +98,7 @@ const TripDetailsPage = ({ params }: { params: { tripId: string } }) => {
   };
 
   if (isLoading) {
-    return <>Loading...</>;
+    return <TripDetailsSkeleton />;
   }
 
   const {
@@ -145,18 +161,36 @@ const TripDetailsPage = ({ params }: { params: { tripId: string } }) => {
                       </Button>
                     </Box>
                   ) : (
-                    <Box>
-                      <Button
-                        onClick={() => {
-                          if (!isLoading && !userInfo?.id) {
-                            redirectToLogin(router, pathname, searchParams);
-                          }
-                          setRequestToJoin(true);
-                        }}
-                      >
-                        request to join
-                      </Button>
-                    </Box>
+                    <>
+                      {requestEligibility?.id ? (
+                        <>
+                          <Chip
+                            label={`RQUEST ${requestEligibility?.status}`}
+                            color="primary"
+                            variant="outlined"
+                          />
+                        </>
+                      ) : (
+                        <>
+                          <Box>
+                            <Button
+                              onClick={() => {
+                                if (!isLoading && !userInfo?.id) {
+                                  redirectToLogin(
+                                    router,
+                                    pathname,
+                                    searchParams,
+                                  );
+                                }
+                                setRequestToJoinModal(true);
+                              }}
+                            >
+                              request to join
+                            </Button>
+                          </Box>
+                        </>
+                      )}
+                    </>
                   )}
                 </Stack>
               </Box>
@@ -292,9 +326,9 @@ const TripDetailsPage = ({ params }: { params: { tripId: string } }) => {
 
       <TTAlert
         message={`Are you sure you want to join this trip?`}
-        open={requestToJoin}
-        setOpen={setRequestToJoin}
-        onYesClick={handleRequestToJoin}
+        open={requestToJoinModal}
+        setOpen={setRequestToJoinModal}
+        onYesClick={() => handleRequestToJoin(tripId, userInfo?.id)}
       />
 
       <TTAlert
@@ -424,7 +458,7 @@ const TripDetailsPage = ({ params }: { params: { tripId: string } }) => {
                           </Stack>
                         </Paper>
                       ))
-                    : travellerList.slice(0, 6).map((traveller: IUserData) => (
+                    : travellerList?.slice(0, 6).map((traveller: IUserData) => (
                         <Link
                           key={traveller.id}
                           href={`/travelers/${traveller?.id}`}
