@@ -3,13 +3,17 @@
 import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import Drawer from "@mui/material/Drawer";
 import IconButton from "@mui/material/IconButton";
 import MenuIcon from "@mui/icons-material/Menu";
+import HomeRoundedIcon from "@mui/icons-material/HomeRounded";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import Sidebar from "../Sidebar/Sidebar";
+import { getUserInfo } from "@/services/auth.service";
+import Link from "next/link";
 
 const drawerWidth = 240;
 
@@ -20,6 +24,14 @@ export default function DashboardDrawer({
 }) {
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
+
+  const userInfo = getUserInfo() as
+    | {
+        id?: string;
+        name?: string;
+        role?: string;
+      }
+    | undefined;
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -58,13 +70,46 @@ export default function DashboardDrawer({
           >
             <MenuIcon />
           </IconButton>
-          <Box>
+          <Box sx={{ flexGrow: 1 }}>
             <Typography variant="body2" noWrap component="div">
-              Hi, Yeasin
+              Hi, {userInfo?.name}
             </Typography>
             <Typography variant="body2" noWrap component="div">
               Welcome To, Trip Together
             </Typography>
+          </Box>
+          <Box sx={{ display: "flex", alignItems: "center" }}>
+            <Button
+              component={Link}
+              href="/"
+              variant="outlined"
+              color="inherit"
+              startIcon={<HomeRoundedIcon />}
+              sx={(theme) => ({
+                textTransform: "none",
+                fontWeight: 700,
+                borderRadius: 999,
+                px: { xs: 1.25, sm: 2 },
+                py: { xs: 0.5, sm: 0.75 },
+                minWidth: 0,
+                borderColor: "rgba(255,255,255,0.7)",
+                color: "#FFF",
+                backgroundColor: "rgba(255,255,255,0.06)",
+                transition: theme.transitions.create(
+                  ["background-color", "border-color", "transform"],
+                  {
+                    duration: theme.transitions.duration.short,
+                  }
+                ),
+                "&:hover": {
+                  borderColor: "rgba(255,255,255,0.95)",
+                  backgroundColor: "rgba(255,255,255,0.14)",
+                  transform: "translateY(-1px)",
+                },
+              })}
+            >
+              Go Home
+            </Button>
           </Box>
         </Toolbar>
       </AppBar>
