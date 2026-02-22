@@ -21,9 +21,19 @@ const travelBuddiesApi = baseApi.injectEndpoints({
 
     getRequestEligibility: build.query({
       query: (data) => {
-        const { userId, tripId } = data;
+        const { tripId } = data;
         return {
-          url: `/travel-buddies/request-eligibility/${tripId}/${userId}`,
+          url: `/travel-buddies/request-eligibility/${tripId}`,
+          method: "GET",
+        };
+      },
+      providesTags: [tagTypes.travelBuddies],
+    }),
+
+    getTravelRequestHistroy: build.query({
+      query: () => {
+        return {
+          url: `/travel-buddies/request-history`,
           method: "GET",
         };
       },
@@ -32,5 +42,8 @@ const travelBuddiesApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useRequestToJoinMutation, useGetRequestEligibilityQuery } =
-  travelBuddiesApi;
+export const {
+  useRequestToJoinMutation,
+  useGetRequestEligibilityQuery,
+  useGetTravelRequestHistroyQuery,
+} = travelBuddiesApi;

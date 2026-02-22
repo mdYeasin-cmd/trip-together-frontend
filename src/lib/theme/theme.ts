@@ -34,6 +34,18 @@ export const theme = createTheme({
         maxWidth: "lg",
       },
     },
+    MuiChip: {
+      styleOverrides: {
+        filledPrimary: {
+          color: "#FFFFFF",
+        },
+
+        outlinedPrimary: {
+          color: "#3AB0A2",
+          borderColor: "#3AB0A2",
+        },
+      },
+    },
   },
 });
 

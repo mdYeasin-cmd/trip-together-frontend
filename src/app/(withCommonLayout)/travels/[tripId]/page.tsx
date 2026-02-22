@@ -60,7 +60,6 @@ const TripDetailsPage = ({ params }: { params: { tripId: string } }) => {
 
   const { data: requestEligibility, isLoading: isRequestEligibilityLoading } =
     useGetRequestEligibilityQuery({
-      userId: userInfo?.id,
       tripId: tripId,
     });
   const { data: tripDetails, isLoading } = useGetATripQuery(tripId);

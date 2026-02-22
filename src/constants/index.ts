@@ -10,6 +10,7 @@ export const dataGridHeaderDesign = {
     backgroundColor: colors.SECONDARY,
     color: colors.WHITE,
     fontSize: "14px",
+    cursor: "default",
   },
   // "& .MuiSvgIcon-root": {
   //   color: colors.WHITE,
