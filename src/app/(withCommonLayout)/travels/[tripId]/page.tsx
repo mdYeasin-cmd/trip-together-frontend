@@ -3,6 +3,8 @@
 import TTAlert from "@/components/Shared/TTAlert/TTAlert";
 import TTModal from "@/components/Shared/TTModal/TTModal";
 import TripDetailsSkeleton from "@/components/Skeletons/TripDetailsSkeleton";
+import TripDetailsCreatorTabs from "@/components/UI/TripDetails/CreatorTabs/CreatorTabs";
+import TripDetailsOverviewTab from "@/components/UI/TripDetails/OverviewTab/OverviewTab";
 import { colors } from "@/constants";
 import {
   useGetRequestEligibilityQuery,
@@ -11,32 +13,25 @@ import {
 import { useGetATripQuery } from "@/redux/api/tripsApi";
 import { useGetAllUsersQuery } from "@/redux/api/usersApi";
 import { getUserInfo } from "@/services/auth.service";
-import { IUserData } from "@/types";
+import { IUserData, TTrip } from "@/types";
 import { getInitials } from "@/utils/avatar";
 import { getStatusChipColor } from "@/utils/chip-color";
-import { dateFormatter } from "@/utils/dateFormater";
 import { redirectToLogin } from "@/utils/redirect";
 import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
-import EventIcon from "@mui/icons-material/Event";
 import LocationOnRoundedIcon from "@mui/icons-material/LocationOnRounded";
 import ManageSearchRoundedIcon from "@mui/icons-material/ManageSearchRounded";
-import PaidRoundedIcon from "@mui/icons-material/PaidRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
-import StyleRoundedIcon from "@mui/icons-material/StyleRounded";
+import TTTabs from "@/components/Shared/TTTabs/TTTabs";
 import {
   Avatar,
   Box,
   Button,
   Chip,
   Container,
-  Divider,
-  Grid,
   InputAdornment,
   Paper,
   Skeleton,
   Stack,
-  Tab,
-  Tabs,
   TextField,
   Typography,
 } from "@mui/material";
@@ -100,18 +95,9 @@ const TripDetailsPage = ({ params }: { params: { tripId: string } }) => {
     return <TripDetailsSkeleton />;
   }
 
-  const {
-    userId,
-    photos,
-    destination,
-    travelType,
-    budget,
-    startDate,
-    endDate,
-    description,
-    createdAt,
-    updatedAt,
-  } = tripDetails;
+  const trip = tripDetails as TTrip;
+  const { userId, destination } = trip;
+  const isTripCreator = userInfo?.id === userId;
 
   return (
     <Box>
@@ -199,128 +185,11 @@ const TripDetailsPage = ({ params }: { params: { tripId: string } }) => {
       </Box>
 
       <Container>
-        <Grid container spacing={3} my={{ xs: 3, md: 5 }}>
-          <Grid item xs={12} md={7} sx={{ display: "flex" }}>
-            <Paper
-              sx={{
-                borderRadius: 2,
-                boxShadow: 1,
-                overflow: "hidden",
-                backgroundColor: colors.WHITE,
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
-              <Box
-                component="img"
-                src={`${photos[0]}`}
-                alt={destination || "Trip photo"}
-                sx={{
-                  display: "block",
-                  width: "100%",
-                  height: { xs: 280, md: 420 },
-                  objectFit: "cover",
-                }}
-              />
-            </Paper>
-          </Grid>
-
-          <Grid item xs={12} md={5} sx={{ display: "flex" }}>
-            <Paper
-              sx={{
-                borderRadius: 2,
-                boxShadow: 1,
-                p: 3,
-                backgroundColor: colors.WHITE,
-                flex: 1,
-                display: "flex",
-                flexDirection: "column",
-              }}
-            >
-              <Typography variant="h6" component="h2" fontWeight={800}>
-                Trip Overview
-              </Typography>
-              <Divider sx={{ my: 2 }} />
-
-              <Stack gap={1.5}>
-                <Stack direction="row" gap={1.5} alignItems="flex-start">
-                  <LocationOnRoundedIcon sx={{ color: colors.SECONDARY }} />
-                  <Box>
-                    <Typography fontWeight={700}>Destination</Typography>
-                    <Typography sx={{ color: "rgba(0,0,0,0.75)" }}>
-                      {destination || "-"}
-                    </Typography>
-                  </Box>
-                </Stack>
-
-                <Stack direction="row" gap={1.5} alignItems="flex-start">
-                  <EventIcon sx={{ color: colors.SECONDARY }} />
-                  <Box>
-                    <Typography fontWeight={700}>Dates</Typography>
-                    <Typography sx={{ color: "rgba(0,0,0,0.75)" }}>
-                      {startDate && endDate
-                        ? `${dateFormatter(startDate)} - ${dateFormatter(
-                            endDate,
-                          )}`
-                        : "-"}
-                    </Typography>
-                  </Box>
-                </Stack>
-
-                <Stack direction="row" gap={1.5} alignItems="flex-start">
-                  <StyleRoundedIcon sx={{ color: colors.SECONDARY }} />
-                  <Box>
-                    <Typography fontWeight={700}>Travel Type</Typography>
-                    <Typography sx={{ color: "rgba(0,0,0,0.75)" }}>
-                      {travelType || "-"}
-                    </Typography>
-                  </Box>
-                </Stack>
-
-                <Stack direction="row" gap={1.5} alignItems="flex-start">
-                  <PaidRoundedIcon sx={{ color: colors.SECONDARY }} />
-                  <Box>
-                    <Typography fontWeight={700}>Budget</Typography>
-                    <Typography sx={{ color: "rgba(0,0,0,0.75)" }}>
-                      {budget !== null ? budget : "-"}
-                    </Typography>
-                  </Box>
-                </Stack>
-              </Stack>
-
-              <Divider sx={{ my: 2.5, mt: "auto" }} />
-              <Typography
-                component="p"
-                sx={{ color: "rgba(0,0,0,0.65)", fontSize: 14 }}
-              >
-                Posted {createdAt ? dateFormatter(createdAt) : "-"}
-                {updatedAt ? ` • Updated ${dateFormatter(updatedAt)}` : ""}
-              </Typography>
-            </Paper>
-          </Grid>
-        </Grid>
-
-        <Paper
-          sx={{
-            borderRadius: 2,
-            boxShadow: 1,
-            p: { xs: 2.5, md: 3 },
-            mb: { xs: 4, md: 6 },
-            backgroundColor: colors.WHITE,
-          }}
-        >
-          <Typography variant="h6" component="h2" fontWeight={800}>
-            About This Trip
-          </Typography>
-          <Divider sx={{ my: 2 }} />
-          <Typography
-            component="p"
-            sx={{ color: "rgba(0,0,0,0.75)", whiteSpace: "pre-line" }}
-          >
-            {description || "No description provided."}
-          </Typography>
-        </Paper>
+        {isTripCreator ? (
+          <TripDetailsCreatorTabs tripId={tripId} trip={trip} />
+        ) : (
+          <TripDetailsOverviewTab trip={trip} />
+        )}
       </Container>
 
       <TTAlert
@@ -353,41 +222,22 @@ const TripDetailsPage = ({ params }: { params: { tripId: string } }) => {
             </Typography>
           </Box>
 
-          <Tabs
+          <TTTabs
             value={activeInviteTab}
-            onChange={(_, v) => setActiveInviteTab(v)}
-            variant="fullWidth"
-            sx={{
-              p: 0.5,
-              borderRadius: 999,
-              backgroundColor: "rgba(58,176,162,0.12)",
-              border: "1px solid rgba(58,176,162,0.18)",
-              "& .MuiTabs-indicator": { display: "none" },
-              "& .MuiTab-root": {
-                minHeight: 40,
-                textTransform: "none",
-                fontWeight: 800,
-                color: "rgba(0,0,0,0.65)",
-                borderRadius: 999,
+            onChange={(v) => setActiveInviteTab(v as number)}
+            tabs={[
+              {
+                label: "AI suggested",
+                icon: <AutoAwesomeRoundedIcon sx={{ fontSize: 18 }} />,
+                iconPosition: "start",
               },
-              "& .MuiTab-root.Mui-selected": {
-                color: "rgba(0,0,0,0.9)",
-                backgroundColor: colors.WHITE,
-                boxShadow: 1,
+              {
+                label: "Manual search",
+                icon: <ManageSearchRoundedIcon sx={{ fontSize: 18 }} />,
+                iconPosition: "start",
               },
-            }}
-          >
-            <Tab
-              icon={<AutoAwesomeRoundedIcon sx={{ fontSize: 18 }} />}
-              iconPosition="start"
-              label="AI suggested"
-            />
-            <Tab
-              icon={<ManageSearchRoundedIcon sx={{ fontSize: 18 }} />}
-              iconPosition="start"
-              label="Manual search"
-            />
-          </Tabs>
+            ]}
+          />
 
           {activeInviteTab === 0 && (
             <Stack gap={1.5}>
