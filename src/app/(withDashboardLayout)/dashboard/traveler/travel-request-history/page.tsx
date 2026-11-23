@@ -89,7 +89,7 @@ const TravelRequestHistory = () => {
     status: string;
   };
 
-  const rows = travelRequestHistory.map((request: rowType) => {
+  const rows = travelRequestHistory?.map((request: rowType) => {
     return {
       id: request?.id,
       tripId: request?.trip?.id,

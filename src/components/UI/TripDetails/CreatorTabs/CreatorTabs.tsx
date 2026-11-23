@@ -28,17 +28,12 @@ const TripDetailsCreatorTabs = ({
         onChange={(v) => setActiveTab(v as number)}
         tabs={[
           { label: "Overview", icon: <DashboardIcon sx={{ fontSize: 18 }} /> },
-          {
-            label: "Request to join",
-            icon: <PersonAddIcon sx={{ fontSize: 18 }} />,
-          },
-          { label: "Invite to join", icon: <MailIcon sx={{ fontSize: 18 }} /> },
         ]}
       />
 
       {activeTab === 0 && <TripDetailsOverviewTab trip={trip} />}
-      {activeTab === 1 && <TripDetailsRequestsTab />}
-      {activeTab === 2 && <TripDetailsInvitesTab />}
+      {/* {activeTab === 1 && <TripDetailsRequestsTab tripId={tripId} />}
+      {activeTab === 2 && <TripDetailsInvitesTab />} */}
     </Stack>
   );
 };

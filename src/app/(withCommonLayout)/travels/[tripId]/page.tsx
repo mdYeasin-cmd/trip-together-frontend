@@ -62,6 +62,8 @@ const TripDetailsPage = ({ params }: { params: { tripId: string } }) => {
     useGetAllUsersQuery(undefined);
   const [requestToJoin] = useRequestToJoinMutation();
 
+  console.log(requestEligibility, "request eligibility");
+
   const handleRequestToJoin = async (tripId: string, userId: string) => {
     try {
       const res = await requestToJoin({
