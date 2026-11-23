@@ -12,7 +12,7 @@ import imgbbImageUploader from "@/helpers/imgbb/imgbbImageUploader";
 import {
   useCreateATripMutation,
   useDeleteATripMutation,
-  useGetAllTripsQuery,
+  useGetMyTripsQuery,
 } from "@/redux/api/tripsApi";
 import { Box, Button, Grid, IconButton, Stack } from "@mui/material";
 import Image from "next/image";
@@ -22,6 +22,8 @@ import { toast } from "sonner";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { dateFormatter } from "@/utils/dateFormater";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ManageAccountsIcon from "@mui/icons-material/ManageAccounts";
+import Link from "next/link";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import dayjs from "dayjs";
@@ -79,7 +81,7 @@ const TravelPostsPage = () => {
 
   // redux consume
   const [createATrip] = useCreateATripMutation();
-  const { data, isLoading } = useGetAllTripsQuery({});
+  const { data, isLoading } = useGetMyTripsQuery(undefined);
   const [deleteATrip] = useDeleteATripMutation();
 
   const handlePostSubmit = async (values: FieldValues) => {
@@ -172,12 +174,22 @@ const TravelPostsPage = () => {
       flex: 1,
       renderCell: ({ row }) => {
         return (
-          <IconButton
-            onClick={() => handlePostDelete(row.id)}
-            aria-label="delete"
-          >
-            <DeleteIcon />
-          </IconButton>
+          <Stack direction="row" alignItems="center" gap={1} height="100%">
+            <Button
+              size="small"
+              component={Link}
+              href={`/dashboard/traveler/travel-posts/manage/${row.id}`}
+              startIcon={<ManageAccountsIcon />}
+            >
+              Manage
+            </Button>
+            <IconButton
+              onClick={() => handlePostDelete(row.id)}
+              aria-label="delete"
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Stack>
         );
       },
     },

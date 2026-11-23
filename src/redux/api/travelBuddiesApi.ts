@@ -3,84 +3,73 @@ import { baseApi } from "./baseApi";
 
 const travelBuddiesApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    requestToJoin: build.mutation({
-      query: (data) => {
-        console.log(data, "data in buddies apoi");
-        const { tripId, ...restData } = data;
+    /* ========== Requests (traveler -> trip creator) ========== */
 
-        console.log(restData, "rest data api");
-        return {
-          url: `/travel-buddies/${tripId}/request`,
-          method: "POST",
-          contentType: "application/json",
-          data: restData,
-        };
-      },
+    requestToJoin: build.mutation({
+      query: ({ tripId, ...restData }) => ({
+        url: `/travel-buddy-requests/trips/${tripId}`,
+        method: "POST",
+        contentType: "application/json",
+        data: restData,
+      }),
       invalidatesTags: [tagTypes.travelBuddies],
     }),
 
     getRequestEligibility: build.query({
-      query: (data) => {
-        const { tripId } = data;
-        return {
-          url: `/travel-buddies/requests/eligibility/${tripId}`,
-          method: "GET",
-        };
-      },
+      query: ({ tripId }) => ({
+        url: `/travel-buddy-requests/eligibility/${tripId}`,
+        method: "GET",
+      }),
       providesTags: [tagTypes.travelBuddies],
     }),
 
     getTravelRequestHistroy: build.query({
-      query: () => {
-        return {
-          url: `/travel-buddy-requests/history`,
-          method: "GET",
-        };
-      },
+      query: () => ({
+        url: `/travel-buddy-requests/history`,
+        method: "GET",
+      }),
       providesTags: [tagTypes.travelBuddies],
     }),
 
+    // trip creator: all join requests of a trip
     getTravelBuddyRequests: build.query({
-      query: (data) => {
-        const { tripId } = data;
-        return {
-          url: `/travel-buddies/requests/${tripId}`,
-          method: "GET",
-        };
-      },
+      query: ({ tripId }) => ({
+        url: `/travel-buddy-requests/trips/${tripId}`,
+        method: "GET",
+      }),
       providesTags: [tagTypes.travelBuddies],
     }),
 
-    acceptTravelRequest: build.mutation({
-      query: (data) => {
-        console.log(data, "data for accept travel buddy request");
-        const { buddyId, ...restData } = data;
-        console.log(restData, "rest data api");
-
-        return {
-          url: `/travel-buddies/requests/${buddyId}/respond`,
-          method: "POST",
-          contentType: "application/json",
-          data: restData,
-        };
-      },
+    // trip creator: approve / reject a join request
+    respondTravelRequest: build.mutation({
+      query: ({ requestId, status }) => ({
+        url: `/travel-buddy-requests/${requestId}/respond`,
+        method: "PATCH",
+        contentType: "application/json",
+        data: { status },
+      }),
       invalidatesTags: [tagTypes.travelBuddies],
     }),
 
-    rejectTravelRequest: build.mutation({
-      query: (data) => {
-        console.log(data, "data for accept travel buddy request");
-        const { buddyId, ...restData } = data;
-        console.log(restData, "rest data api");
+    /* ========== Invitations (trip creator -> traveler) ========== */
 
-        return {
-          url: `/travel-buddies/requests/${buddyId}/respond`,
-          method: "POST",
-          contentType: "application/json",
-          data: restData,
-        };
-      },
+    inviteTraveller: build.mutation({
+      query: ({ tripId, buddyId }) => ({
+        url: `/travel-buddy-invitations/trips/${tripId}`,
+        method: "POST",
+        contentType: "application/json",
+        data: { buddyId },
+      }),
       invalidatesTags: [tagTypes.travelBuddies],
+    }),
+
+    // trip creator: all invitations sent for a trip
+    getTripInvitations: build.query({
+      query: ({ tripId }) => ({
+        url: `/travel-buddy-invitations/trips/${tripId}`,
+        method: "GET",
+      }),
+      providesTags: [tagTypes.travelBuddies],
     }),
   }),
 });
@@ -90,6 +79,7 @@ export const {
   useGetRequestEligibilityQuery,
   useGetTravelRequestHistroyQuery,
   useGetTravelBuddyRequestsQuery,
-  useAcceptTravelRequestMutation,
-  useRejectTravelRequestMutation,
+  useRespondTravelRequestMutation,
+  useInviteTravellerMutation,
+  useGetTripInvitationsQuery,
 } = travelBuddiesApi;

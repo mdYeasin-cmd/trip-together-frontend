@@ -12,3 +12,17 @@ export type TTrip = {
   createdAt: string;
   updatedAt: string;
 };
+
+export type TTravelBuddyRequest = {
+  id: string;
+  userId: string;
+  tripId: string;
+  status: string;
+  type: "REQUEST" | "INVITE";
+  createdAt: string;
+  user?: {
+    id: string;
+    name: string;
+    email: string;
+  };
+};

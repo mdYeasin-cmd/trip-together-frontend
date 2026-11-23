@@ -2,147 +2,161 @@ import TTAlert from "@/components/Shared/TTAlert/TTAlert";
 import { dataGridHeaderDesign } from "@/constants";
 import { RequestAndInviteStatus } from "@/constants/requestAndInviteStatus";
 import {
-  useAcceptTravelRequestMutation,
   useGetTravelBuddyRequestsQuery,
-  useRejectTravelRequestMutation,
+  useRespondTravelRequestMutation,
 } from "@/redux/api/travelBuddiesApi";
-import { Box, Button } from "@mui/material";
+import { TTravelBuddyRequest } from "@/types";
+import { getRequestStatusChipColor } from "@/utils/chip-color";
+import { dateFormatter } from "@/utils/dateFormater";
+import { Box, Button, Chip, Stack } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useState } from "react";
 import { toast } from "sonner";
+import EmptyGridOverlay from "../EmptyGridOverlay/EmptyGridOverlay";
 
-type TripRequest = {
+type RequestRow = {
   id: string;
-  userId: string;
-  tripId: string;
   name: string;
-  user: {
-    name: string;
-    email: string;
-  };
+  email: string;
+  status: string;
+  createdAt: string;
+};
+
+type PendingAction = {
+  row: RequestRow;
   status: string;
 };
 
 const TripDetailsRequestsTab = ({ tripId }: { tripId: string }) => {
-  const [acceptAlert, setAcceptAlert] = useState<boolean>(false);
-  const [rejectAlert, setRejectAlert] = useState<boolean>(false);
-  const [requestData, setRequestData] = useState<TripRequest>({
-    id: "",
-    userId: "",
-    tripId: "",
-    name: "",
-    user: {
-      name: "",
-      email: "",
-    },
-    status: "",
-  });
+  const [pendingAction, setPendingAction] = useState<PendingAction | null>(
+    null,
+  );
+  const [alertOpen, setAlertOpen] = useState<boolean>(false);
 
-  const { isLoading, data } = useGetTravelBuddyRequestsQuery({ tripId });
-  const [acceptTravelRequest] = useAcceptTravelRequestMutation();
-  const [rejectTravelRequest] = useRejectTravelRequestMutation();
+  const { data, isLoading } = useGetTravelBuddyRequestsQuery({ tripId });
+  const [respondTravelRequest, { isLoading: isResponding }] =
+    useRespondTravelRequestMutation();
 
-  const handleRequestAccept = (data: { name: string }) => {
-    setAcceptAlert(true);
-    setRequestData(data);
+  const openConfirm = (row: RequestRow, status: string) => {
+    setPendingAction({ row, status });
+    setAlertOpen(true);
   };
 
-  const handleRequestRejct = (data: { name: string }) => {
-    setRejectAlert(true);
-    setRequestData(data);
+  const handleRespond = async () => {
+    if (!pendingAction) return;
+    const { row, status } = pendingAction;
+    const isAccept = status === RequestAndInviteStatus.ACCEPT;
+
+    const res = await respondTravelRequest({ requestId: row.id, status });
+
+    if (res && "data" in res && res.data) {
+      toast.success(
+        isAccept
+          ? `${row.name} is now your travel buddy.`
+          : `${row.name}'s request was rejected.`,
+      );
+    } else {
+      toast.error("Failed to respond to the travel request.");
+    }
+
+    setAlertOpen(false);
+    setPendingAction(null);
   };
 
-  const columns: GridColDef[] = [
+  const rows: RequestRow[] = (data ?? []).map(
+    (request: TTravelBuddyRequest) => ({
+      id: request.id,
+      name: request.user?.name ?? "Unknown traveller",
+      email: request.user?.email ?? "-",
+      status: request.status,
+      createdAt: request.createdAt,
+    }),
+  );
+
+  const columns: GridColDef<RequestRow>[] = [
+    { field: "name", headerName: "Name", flex: 1, minWidth: 180 },
+    { field: "email", headerName: "Email", flex: 1, minWidth: 220 },
     {
-      field: "name",
-      headerName: "Name",
-      width: 300,
-    },
-    {
-      field: "email",
-      headerName: "Email",
-      width: 250,
+      field: "createdAt",
+      headerName: "Requested on",
+      width: 150,
+      renderCell: ({ row }) => (row.createdAt ? dateFormatter(row.createdAt) : "-"),
     },
     {
       field: "status",
       headerName: "Status",
-      width: 250,
+      width: 140,
+      renderCell: ({ row }) => (
+        <Chip
+          size="small"
+          label={row.status}
+          color={getRequestStatusChipColor(row.status)}
+          sx={{ fontWeight: 700 }}
+        />
+      ),
     },
     {
       field: "action",
       headerName: "Action",
-      flex: 1,
-      renderCell: ({ row }) => {
-        if (row)
-          return (
-            <>
-              <Button sx={{ mr: 2 }} onClick={() => handleRequestAccept(row)}>
-                Accept
-              </Button>
-              <Button onClick={() => handleRequestRejct(row)}>Reject</Button>
-            </>
-          );
-      },
+      width: 220,
+      sortable: false,
+      renderCell: ({ row }) =>
+        row.status === RequestAndInviteStatus.PENDING ? (
+          <Stack direction="row" gap={1}>
+            <Button
+              size="small"
+              disabled={isResponding}
+              onClick={() => openConfirm(row, RequestAndInviteStatus.ACCEPT)}
+            >
+              Accept
+            </Button>
+            <Button
+              size="small"
+              color="error"
+              variant="outlined"
+              disabled={isResponding}
+              onClick={() => openConfirm(row, RequestAndInviteStatus.REJECT)}
+            >
+              Reject
+            </Button>
+          </Stack>
+        ) : (
+          <Box sx={{ color: "rgba(0,0,0,0.45)" }}>—</Box>
+        ),
     },
   ];
 
-  if (isLoading) {
-    return <>Loading...</>;
-  }
-
-  const rows = data?.map((request: TripRequest) => ({
-    id: request?.id,
-    userId: request?.userId,
-    tripId: request?.tripId,
-    name: request?.user?.name,
-    email: request?.user?.email,
-    status: request?.status,
-  }));
-
-  console.log(rows, "all rows");
+  const isAcceptAction =
+    pendingAction?.status === RequestAndInviteStatus.ACCEPT;
 
   return (
     <Box>
-      <DataGrid rows={rows} columns={columns} sx={dataGridHeaderDesign} />
-
-      <TTAlert
-        open={acceptAlert}
-        setOpen={setAcceptAlert}
-        message={`Are you sure you want to accept ${requestData?.name} as your travel buddy?`}
-        onYesClick={async () => {
-          try {
-            console.log(
-              {
-                buddyId: requestData?.userId,
-                tripId: requestData?.tripId,
-                status: RequestAndInviteStatus.ACCEPT,
-              },
-              "request data test",
-            );
-            const res = await acceptTravelRequest({
-              buddyId: requestData?.userId,
-              tripId: requestData?.tripId,
-              status: RequestAndInviteStatus.ACCEPT,
-            });
-
-            console.log(res, "accept travel reqeust error");
-
-            if (res?.data?.id) {
-              toast.success("Travel reqeust accepted successfully.");
-              setAcceptAlert(false);
-            }
-          } catch (error) {
-            toast.error("Failed to accept travel request.");
-            console.log(error, "accept travel request error");
-          }
+      <DataGrid
+        autoHeight
+        rows={rows}
+        columns={columns}
+        loading={isLoading}
+        disableRowSelectionOnClick
+        sx={dataGridHeaderDesign}
+        slots={{
+          noRowsOverlay: () => (
+            <EmptyGridOverlay
+              title="No join requests yet"
+              subtitle="When travellers request to join this trip, they will appear here."
+            />
+          ),
         }}
       />
 
       <TTAlert
-        open={rejectAlert}
-        setOpen={setRejectAlert}
-        message={`Are you sure you want to reject ${requestData?.name}'s request to be your travel buddy?`}
-        onYesClick={() => {}}
+        open={alertOpen}
+        setOpen={setAlertOpen}
+        message={
+          isAcceptAction
+            ? `Are you sure you want to accept ${pendingAction?.row.name} as your travel buddy?`
+            : `Are you sure you want to reject ${pendingAction?.row.name}'s request?`
+        }
+        onYesClick={handleRespond}
       />
     </Box>
   );
