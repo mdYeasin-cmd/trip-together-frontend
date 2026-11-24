@@ -28,6 +28,18 @@ const buddyInvitationApi = baseApi.injectEndpoints({
       }),
       providesTags: [tagTypes.buddyInvitations],
     }),
+
+    // invitee: accept / reject an invitation
+    respondInvitation: build.mutation({
+      query: ({ invitationId, tripId, status }) => ({
+        url: `/travel-buddy-invitations/${invitationId}/respond`,
+        method: "PATCH",
+        contentType: "application/json",
+        data: { tripId, status },
+      }),
+      // Request eligibility and request history read invite rows too.
+      invalidatesTags: [tagTypes.buddyInvitations, tagTypes.buddyRequests],
+    }),
   }),
 });
 
@@ -35,4 +47,5 @@ export const {
   useInviteTravellerMutation,
   useGetInvitationsQuery,
   useGetInvitationHistroyQuery,
+  useRespondInvitationMutation,
 } = buddyInvitationApi;

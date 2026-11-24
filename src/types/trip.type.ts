@@ -20,6 +20,7 @@ export type TTravelBuddyRequest = {
   status: string;
   type: "REQUEST" | "INVITE";
   createdAt: string;
+  updatedAt?: string;
   user?: {
     id: string;
     name: string;

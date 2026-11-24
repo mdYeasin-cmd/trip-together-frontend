@@ -3,15 +3,18 @@
 import TTTabs from "@/components/Shared/TTTabs/TTTabs";
 import InviteTravellerModal from "@/components/UI/TripDetails/InviteTravellerModal/InviteTravellerModal";
 import TripDetailsInvitesTab from "@/components/UI/TripDetails/InvitesTab/InvitesTab";
+import TripDetailsJoinedTab from "@/components/UI/TripDetails/JoinedTab/JoinedTab";
 import TripDetailsRequestsTab from "@/components/UI/TripDetails/RequestsTab/RequestsTab";
 import { colors } from "@/constants";
+import { RequestAndInviteStatus } from "@/constants/requestAndInviteStatus";
 import { useGetInvitationsQuery } from "@/redux/api/buddyInvitationApi";
 import { useGetTravelBuddyRequestsQuery } from "@/redux/api/buddyRequestApi";
 import { useGetATripQuery } from "@/redux/api/tripsApi";
 import { getUserInfo } from "@/services/auth.service";
-import { TTrip } from "@/types";
+import { TTravelBuddyRequest, TTrip } from "@/types";
 import { dateFormatter } from "@/utils/dateFormater";
 import ArrowBackRoundedIcon from "@mui/icons-material/ArrowBackRounded";
+import GroupsIcon from "@mui/icons-material/Groups";
 import MailIcon from "@mui/icons-material/Mail";
 import OpenInNewRoundedIcon from "@mui/icons-material/OpenInNewRounded";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
@@ -39,14 +42,10 @@ const ManageTravelPostPage = ({ params }: { params: { tripId: string } }) => {
   const isOwner = Boolean(trip && userInfo?.id === trip.userId);
 
   // Counts for the tab labels (shared cache with the tab tables).
-  const { data: requests } = useGetTravelBuddyRequestsQuery(
-    { tripId },
-    { skip: !isOwner },
-  );
-  const { data: invitations } = useGetInvitationsQuery(
-    { tripId },
-    { skip: !isOwner },
-  );
+  const { data: requests, isLoading: isLoadingRequests } =
+    useGetTravelBuddyRequestsQuery({ tripId }, { skip: !isOwner });
+  const { data: invitations, isLoading: isLoadingInvitations } =
+    useGetInvitationsQuery({ tripId }, { skip: !isOwner });
 
   if (isLoading) {
     return (
@@ -79,6 +78,12 @@ const ManageTravelPostPage = ({ params }: { params: { tripId: string } }) => {
     requests?.filter((r: { status: string }) => r.status === "PENDING")
       .length ?? 0;
   const inviteCount = invitations?.length ?? 0;
+  const joinedBuddies: TTravelBuddyRequest[] = [
+    ...(requests ?? []),
+    ...(invitations ?? []),
+  ].filter(
+    (b: TTravelBuddyRequest) => b.status === RequestAndInviteStatus.ACCEPT,
+  );
 
   return (
     <Stack gap={3}>
@@ -143,7 +148,7 @@ const ManageTravelPostPage = ({ params }: { params: { tripId: string } }) => {
         </Button>
       </Paper>
 
-      {/* Requests / Invites */}
+      {/* Already joined / Requests / Invites */}
       <Stack
         direction={{ xs: "column", sm: "row" }}
         justifyContent="space-between"
@@ -151,9 +156,15 @@ const ManageTravelPostPage = ({ params }: { params: { tripId: string } }) => {
         gap={2}
       >
         <TTTabs
+          variant="scrollable"
           value={activeTab}
           onChange={(v) => setActiveTab(v as number)}
           tabs={[
+            {
+              label: `Already Joined (${joinedBuddies.length})`,
+              icon: <GroupsIcon sx={{ fontSize: 18 }} />,
+              iconPosition: "start",
+            },
             {
               label: `Requests (${requestCount})${pendingRequestCount ? ` · ${pendingRequestCount} new` : ""}`,
               icon: <PersonAddIcon sx={{ fontSize: 18 }} />,
@@ -169,13 +180,20 @@ const ManageTravelPostPage = ({ params }: { params: { tripId: string } }) => {
         <Button
           startIcon={<PersonAddIcon />}
           onClick={() => setInviteOpen(true)}
+          sx={{ flexShrink: 0 }}
         >
           Invite traveller
         </Button>
       </Stack>
 
-      {activeTab === 0 && <TripDetailsRequestsTab tripId={tripId} />}
-      {activeTab === 1 && <TripDetailsInvitesTab tripId={tripId} />}
+      {activeTab === 0 && (
+        <TripDetailsJoinedTab
+          buddies={joinedBuddies}
+          isLoading={isLoadingRequests || isLoadingInvitations}
+        />
+      )}
+      {activeTab === 1 && <TripDetailsRequestsTab tripId={tripId} />}
+      {activeTab === 2 && <TripDetailsInvitesTab tripId={tripId} />}
 
       <InviteTravellerModal
         open={inviteOpen}
