@@ -4,7 +4,7 @@ import { RequestAndInviteStatus } from "@/constants/requestAndInviteStatus";
 import {
   useGetTravelBuddyRequestsQuery,
   useRespondTravelRequestMutation,
-} from "@/redux/api/travelBuddiesApi";
+} from "@/redux/api/buddyRequestApi";
 import { TTravelBuddyRequest } from "@/types";
 import { getRequestStatusChipColor } from "@/utils/chip-color";
 import { dateFormatter } from "@/utils/dateFormater";
@@ -80,7 +80,8 @@ const TripDetailsRequestsTab = ({ tripId }: { tripId: string }) => {
       field: "createdAt",
       headerName: "Requested on",
       width: 150,
-      renderCell: ({ row }) => (row.createdAt ? dateFormatter(row.createdAt) : "-"),
+      renderCell: ({ row }) =>
+        row.createdAt ? dateFormatter(row.createdAt) : "-",
     },
     {
       field: "status",

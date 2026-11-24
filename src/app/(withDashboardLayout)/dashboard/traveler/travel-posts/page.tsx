@@ -204,11 +204,7 @@ const TravelPostsPage = () => {
 
         {!isLoading ? (
           <Box sx={{ mt: 2 }}>
-            <DataGrid
-              rows={data?.data}
-              columns={columns}
-              sx={dataGridHeaderDesign}
-            />
+            <DataGrid rows={data} columns={columns} sx={dataGridHeaderDesign} />
           </Box>
         ) : (
           <h1>Loading...</h1>

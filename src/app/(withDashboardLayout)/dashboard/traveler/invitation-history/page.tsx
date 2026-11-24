@@ -1,20 +1,20 @@
 "use client";
 
 import { dataGridHeaderDesign } from "@/constants";
-import { useGetTravelRequestHistroyQuery } from "@/redux/api/travelBuddiesApi";
+import { useGetInvitationHistroyQuery } from "@/redux/api/buddyInvitationApi";
 import { dateFormatter } from "@/utils/dateFormater";
 import { Box, Chip } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-const TravelRequestHistory = () => {
+const InvitationHistory = () => {
   const router = useRouter();
 
-  const {
-    data: travelRequestHistory,
-    isLoading: isLoadingTravelRequestHistory,
-  } = useGetTravelRequestHistroyQuery(undefined);
+  const { data: invitationHistory, isLoading: isLoadingInvitationHistory } =
+    useGetInvitationHistroyQuery(undefined);
+
+  console.log(invitationHistory, "invitation history");
 
   const columns: GridColDef[] = [
     {
@@ -70,11 +70,9 @@ const TravelRequestHistory = () => {
     },
   ];
 
-  if (isLoadingTravelRequestHistory) {
+  if (isLoadingInvitationHistory) {
     return <>Loading...</>;
   }
-
-  console.log(travelRequestHistory, "travel request history");
 
   type rowType = {
     id: string;
@@ -89,7 +87,7 @@ const TravelRequestHistory = () => {
     status: string;
   };
 
-  const rows = travelRequestHistory?.map((request: rowType) => {
+  const rows = invitationHistory?.map((request: rowType) => {
     return {
       id: request?.id,
       tripId: request?.trip?.id,
@@ -102,11 +100,9 @@ const TravelRequestHistory = () => {
     };
   });
 
-  console.log(rows, "rows of travel");
-
   return (
     <div>
-      {!isLoadingTravelRequestHistory ? (
+      {!isLoadingInvitationHistory ? (
         <Box sx={{ mt: 2 }}>
           <DataGrid
             rows={rows}
@@ -130,4 +126,4 @@ const TravelRequestHistory = () => {
   );
 };
 
-export default TravelRequestHistory;
+export default InvitationHistory;

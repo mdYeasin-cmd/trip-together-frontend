@@ -5,10 +5,9 @@ import TTModal from "@/components/Shared/TTModal/TTModal";
 import TTTabs from "@/components/Shared/TTTabs/TTTabs";
 import { colors } from "@/constants";
 import {
-  useGetTravelBuddyRequestsQuery,
-  useGetTripInvitationsQuery,
+  useGetInvitationsQuery,
   useInviteTravellerMutation,
-} from "@/redux/api/travelBuddiesApi";
+} from "@/redux/api/buddyInvitationApi";
 import { useGetAllUsersQuery } from "@/redux/api/usersApi";
 import { IUserData, TTravelBuddyRequest } from "@/types";
 import { getInitials } from "@/utils/avatar";
@@ -160,11 +159,7 @@ const InviteTravellerModal = ({
 
   const { data: travellerList, isLoading: isLoadingTravellers } =
     useGetAllUsersQuery(undefined, { skip: !open });
-  const { data: requests } = useGetTravelBuddyRequestsQuery(
-    { tripId },
-    { skip: !open },
-  );
-  const { data: invitations } = useGetTripInvitationsQuery(
+  const { data: invitations } = useGetInvitationsQuery(
     { tripId },
     { skip: !open },
   );
@@ -173,14 +168,11 @@ const InviteTravellerModal = ({
 
   const linked = useMemo<LinkedMap>(() => {
     const map: LinkedMap = {};
-    (requests ?? []).forEach((r: TTravelBuddyRequest) => {
-      map[r.userId] = "Requested";
-    });
     (invitations ?? []).forEach((i: TTravelBuddyRequest) => {
       map[i.userId] = "Invited";
     });
     return map;
-  }, [requests, invitations]);
+  }, [invitations]);
 
   // The trip creator can never invite themselves.
   const candidates: IUserData[] = useMemo(

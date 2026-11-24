@@ -28,7 +28,7 @@ export const drawerItems = (role: UserRole): DrawerItem[] => {
           title: "Trip Management",
           path: `${role}/trip-management`,
           icon: ConnectingAirportsIcon,
-        }
+        },
       );
       break;
 
@@ -48,7 +48,7 @@ export const drawerItems = (role: UserRole): DrawerItem[] => {
           title: "Trip Management",
           path: `${role}/trip-management`,
           icon: ConnectingAirportsIcon,
-        }
+        },
       );
       break;
 
@@ -60,15 +60,20 @@ export const drawerItems = (role: UserRole): DrawerItem[] => {
           icon: AccountBoxIcon,
         },
         {
-          title: "Travel Posts",
+          title: "Posts",
           path: `${role}/travel-posts`,
           icon: FeedIcon,
         },
         {
-          title: "Travel Request History",
-          path: `${role}/travel-request-history`,
+          title: "Request History",
+          path: `${role}/request-history`,
           icon: HistoryIcon,
-        }
+        },
+        {
+          title: "Invitation History",
+          path: `${role}/invitation-history`,
+          icon: HistoryIcon,
+        },
       );
       break;
 

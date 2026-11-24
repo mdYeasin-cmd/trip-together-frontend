@@ -1,11 +1,13 @@
 export enum tagTypes {
   trips = "trips",
   users = "users",
-  travelBuddies = "travelBuddies",
+  buddyRequests = "buddyRequests",
+  buddyInvitations = "buddyInvitations",
 }
 
 export const tagTypesList = [
   tagTypes.trips,
   tagTypes.users,
-  tagTypes.travelBuddies,
+  tagTypes.buddyRequests,
+  tagTypes.buddyInvitations,
 ]; // baseApi tagTypes

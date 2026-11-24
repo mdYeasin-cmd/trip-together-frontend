@@ -1,11 +1,11 @@
 import { dataGridHeaderDesign } from "@/constants";
-import { useGetTripInvitationsQuery } from "@/redux/api/travelBuddiesApi";
 import { TTravelBuddyRequest } from "@/types";
 import { getRequestStatusChipColor } from "@/utils/chip-color";
 import { dateFormatter } from "@/utils/dateFormater";
 import { Box, Chip } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import EmptyGridOverlay from "../EmptyGridOverlay/EmptyGridOverlay";
+import { useGetInvitationsQuery } from "@/redux/api/buddyInvitationApi";
 
 type InviteRow = {
   id: string;
@@ -16,17 +16,15 @@ type InviteRow = {
 };
 
 const TripDetailsInvitesTab = ({ tripId }: { tripId: string }) => {
-  const { data, isLoading } = useGetTripInvitationsQuery({ tripId });
+  const { data, isLoading } = useGetInvitationsQuery({ tripId });
 
-  const rows: InviteRow[] = (data ?? []).map(
-    (invite: TTravelBuddyRequest) => ({
-      id: invite.id,
-      name: invite.user?.name ?? "Unknown traveller",
-      email: invite.user?.email ?? "-",
-      status: invite.status,
-      createdAt: invite.createdAt,
-    }),
-  );
+  const rows: InviteRow[] = (data ?? []).map((invite: TTravelBuddyRequest) => ({
+    id: invite.id,
+    name: invite.user?.name ?? "Unknown traveller",
+    email: invite.user?.email ?? "-",
+    status: invite.status,
+    createdAt: invite.createdAt,
+  }));
 
   const columns: GridColDef<InviteRow>[] = [
     { field: "name", headerName: "Name", flex: 1, minWidth: 180 },
@@ -35,7 +33,8 @@ const TripDetailsInvitesTab = ({ tripId }: { tripId: string }) => {
       field: "createdAt",
       headerName: "Invited on",
       width: 150,
-      renderCell: ({ row }) => (row.createdAt ? dateFormatter(row.createdAt) : "-"),
+      renderCell: ({ row }) =>
+        row.createdAt ? dateFormatter(row.createdAt) : "-",
     },
     {
       field: "status",

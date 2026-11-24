@@ -1,18 +1,16 @@
 import { tagTypes } from "../tagTypes";
 import { baseApi } from "./baseApi";
 
-const travelBuddiesApi = baseApi.injectEndpoints({
+const buddyRequestApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
-    /* ========== Requests (traveler -> trip creator) ========== */
-
     requestToJoin: build.mutation({
       query: ({ tripId, ...restData }) => ({
-        url: `/travel-buddy-requests/trips/${tripId}`,
+        url: `/travel-buddy-requests/${tripId}`,
         method: "POST",
         contentType: "application/json",
         data: restData,
       }),
-      invalidatesTags: [tagTypes.travelBuddies],
+      invalidatesTags: [tagTypes.buddyRequests],
     }),
 
     getRequestEligibility: build.query({
@@ -20,7 +18,7 @@ const travelBuddiesApi = baseApi.injectEndpoints({
         url: `/travel-buddy-requests/eligibility/${tripId}`,
         method: "GET",
       }),
-      providesTags: [tagTypes.travelBuddies],
+      providesTags: [tagTypes.buddyRequests],
     }),
 
     getTravelRequestHistroy: build.query({
@@ -28,16 +26,16 @@ const travelBuddiesApi = baseApi.injectEndpoints({
         url: `/travel-buddy-requests/history`,
         method: "GET",
       }),
-      providesTags: [tagTypes.travelBuddies],
+      providesTags: [tagTypes.buddyRequests],
     }),
 
     // trip creator: all join requests of a trip
     getTravelBuddyRequests: build.query({
       query: ({ tripId }) => ({
-        url: `/travel-buddy-requests/trips/${tripId}`,
+        url: `/travel-buddy-requests/${tripId}`,
         method: "GET",
       }),
-      providesTags: [tagTypes.travelBuddies],
+      providesTags: [tagTypes.buddyRequests],
     }),
 
     // trip creator: approve / reject a join request
@@ -48,28 +46,7 @@ const travelBuddiesApi = baseApi.injectEndpoints({
         contentType: "application/json",
         data: { status },
       }),
-      invalidatesTags: [tagTypes.travelBuddies],
-    }),
-
-    /* ========== Invitations (trip creator -> traveler) ========== */
-
-    inviteTraveller: build.mutation({
-      query: ({ tripId, buddyId }) => ({
-        url: `/travel-buddy-invitations/trips/${tripId}`,
-        method: "POST",
-        contentType: "application/json",
-        data: { buddyId },
-      }),
-      invalidatesTags: [tagTypes.travelBuddies],
-    }),
-
-    // trip creator: all invitations sent for a trip
-    getTripInvitations: build.query({
-      query: ({ tripId }) => ({
-        url: `/travel-buddy-invitations/trips/${tripId}`,
-        method: "GET",
-      }),
-      providesTags: [tagTypes.travelBuddies],
+      invalidatesTags: [tagTypes.buddyRequests],
     }),
   }),
 });
@@ -80,6 +57,4 @@ export const {
   useGetTravelRequestHistroyQuery,
   useGetTravelBuddyRequestsQuery,
   useRespondTravelRequestMutation,
-  useInviteTravellerMutation,
-  useGetTripInvitationsQuery,
-} = travelBuddiesApi;
+} = buddyRequestApi;

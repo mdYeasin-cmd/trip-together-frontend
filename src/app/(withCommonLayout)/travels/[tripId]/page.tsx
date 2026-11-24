@@ -8,7 +8,7 @@ import { colors } from "@/constants";
 import {
   useGetRequestEligibilityQuery,
   useRequestToJoinMutation,
-} from "@/redux/api/travelBuddiesApi";
+} from "@/redux/api/buddyRequestApi";
 import { useGetATripQuery } from "@/redux/api/tripsApi";
 import { getUserInfo } from "@/services/auth.service";
 import { TTrip } from "@/types";

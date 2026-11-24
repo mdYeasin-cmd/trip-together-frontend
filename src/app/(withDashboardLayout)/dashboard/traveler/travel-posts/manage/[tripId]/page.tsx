@@ -5,10 +5,8 @@ import InviteTravellerModal from "@/components/UI/TripDetails/InviteTravellerMod
 import TripDetailsInvitesTab from "@/components/UI/TripDetails/InvitesTab/InvitesTab";
 import TripDetailsRequestsTab from "@/components/UI/TripDetails/RequestsTab/RequestsTab";
 import { colors } from "@/constants";
-import {
-  useGetTravelBuddyRequestsQuery,
-  useGetTripInvitationsQuery,
-} from "@/redux/api/travelBuddiesApi";
+import { useGetInvitationsQuery } from "@/redux/api/buddyInvitationApi";
+import { useGetTravelBuddyRequestsQuery } from "@/redux/api/buddyRequestApi";
 import { useGetATripQuery } from "@/redux/api/tripsApi";
 import { getUserInfo } from "@/services/auth.service";
 import { TTrip } from "@/types";
@@ -45,7 +43,7 @@ const ManageTravelPostPage = ({ params }: { params: { tripId: string } }) => {
     { tripId },
     { skip: !isOwner },
   );
-  const { data: invitations } = useGetTripInvitationsQuery(
+  const { data: invitations } = useGetInvitationsQuery(
     { tripId },
     { skip: !isOwner },
   );
