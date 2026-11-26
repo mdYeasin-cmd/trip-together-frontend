@@ -136,6 +136,7 @@ const LoginPage = () => {
                         type="email"
                         fullWidth={true}
                         name="email"
+                        data-testid="login-email"
                       />
                     </Grid>
 
@@ -145,6 +146,7 @@ const LoginPage = () => {
                         type="password"
                         fullWidth={true}
                         name="password"
+                        data-testid="login-password"
                       />
                     </Grid>
                   </Grid>
@@ -157,6 +159,7 @@ const LoginPage = () => {
 
                   <Button
                     type="submit"
+                    data-testid="login-button"
                     sx={{ margin: "20px 0px" }}
                     fullWidth={true}
                   >

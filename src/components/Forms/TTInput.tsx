@@ -11,6 +11,7 @@ type TInputProps = {
   required?: boolean;
   multiline?: boolean;
   minRows?: number;
+  "data-testid"?: string;
 };
 
 const TTInput = ({
@@ -23,6 +24,7 @@ const TTInput = ({
   required,
   multiline = false,
   minRows = 1,
+  "data-testid": dataTestId,
 }: TInputProps) => {
   const { control } = useFormContext();
   return (
@@ -44,6 +46,7 @@ const TTInput = ({
           helperText={error?.message}
           multiline={multiline}
           minRows={minRows}
+          inputProps={{ "data-testid": dataTestId }}
         />
       )}
     />

@@ -166,7 +166,11 @@ const AuthButton = () => {
           </Menu>
         </>
       ) : (
-        <Button component={Link} href={"/login"}>
+        <Button
+          component={Link}
+          href={"/login"}
+          data-testid="navbar-login-button"
+        >
           Login
         </Button>
       )}

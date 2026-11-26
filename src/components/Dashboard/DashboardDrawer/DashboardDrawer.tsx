@@ -82,6 +82,7 @@ export default function DashboardDrawer({
             <Button
               component={Link}
               href="/"
+              data-testid="go-home-button"
               variant="outlined"
               color="inherit"
               startIcon={<HomeRoundedIcon />}
